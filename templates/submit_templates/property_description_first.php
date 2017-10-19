@@ -117,7 +117,9 @@ global $instant_booking;
                     <label for="guest_no"><?php esc_html_e('*Guest No (mandatory)','wpestate');?></label>
                     <select id="guest_no" name="guest_no">
                         <?php 
-                        for($i=0; $i<15; $i++) {
+                        $guest_dropdown_no                    =   intval   ( get_option('wp_estate_guest_dropdown_no','') );
+     
+                        for($i=0; $i <= $guest_dropdown_no; $i++) {
                             print '<option value="'.$i.'" ';
                                 if ( $guestnumber==$i){
                                     print ' selected="selected" ';

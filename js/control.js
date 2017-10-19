@@ -9,7 +9,7 @@ var my_custom_curr_pos      =   parseFloat(getCookie('my_custom_curr_pos'), 10);
 var my_custom_curr_cur_post =   getCookie('my_custom_curr_cur_post');
 var my_custom_curr_label    =   getCookie('my_custom_curr');
 var my_custom_curr_symbol2  =   decodeURIComponent ( getCookie('my_custom_curr_symbol2') );
-
+var login_modal_type        =   1;
 
 function getCookie(cname) {
     var name, ca, i, c;
@@ -22,6 +22,12 @@ function getCookie(cname) {
     }
     return "";
 }   
+
+function estate_splash_slider(){
+    if(jQuery("#splash_slider_wrapper").length>0){
+       
+    }
+} 
     
 (function($) {
   $.fn.nodoubletapzoom = function() {
@@ -140,7 +146,7 @@ jQuery('#google_map_prop_list_sidebar').scroll(function () {
     "use strict";
     var scroll = jQuery('#google_map_prop_list_sidebar').scrollTop();
     if (scroll >= 110) {
-        console.log(scroll);
+      //  console.log(scroll);
         jQuery('#advanced_search_map_list_hidden').show();
         jQuery('#advanced_search_map_list').removeClass('move_to_fixed');
     } else {
@@ -245,7 +251,7 @@ function owner_insert_book() {
         },
         success: function (data) {
         
-  
+          
          
             jQuery('.has_future').each(function () {
                 jQuery('#start_date, #end_date').val('');
@@ -280,6 +286,7 @@ function owner_insert_book() {
            
         },
         error: function (errorThrown) {
+            console.log(errorThrown);
         }
     });
 }
@@ -821,23 +828,22 @@ function enableAllTheseDays(date, from_who) {
             end_reservation=0;
            
         }
-        
-        if(week_day !== block_check_in_check_out && block_check_in_check_out!==0 && unixtime1_key > today ){ 
+        if(week_day !== block_check_in_check_out && block_check_in_check_out!==0 && unixtime1_key > (today-24*60*60) ){ 
       
-        if(reservation_class !== ' end_reservation'){
-            reservation_class=' check_in_block';
-        }
-        return [
-            false,
-            "wpestate_calendar "+reservation_class+" date"+unixtime1_key, 
-            wpestate_booking_calendat_get_price(unixtime1_key,display_price) 
-        ]; 
+            if(reservation_class !== ' end_reservation'){
+                reservation_class=' check_in_block 1';
+            }
+            return [
+                false,
+                "wpestate_calendar "+reservation_class+" date"+unixtime1_key, 
+                wpestate_booking_calendat_get_price(unixtime1_key,display_price) 
+            ]; 
         
         //Check in/Check out  only on '+weekdays[block_check_in]
-        }else if(week_day !== block_check_in && block_check_in!==0 && from_who ==='start_date' && unixtime1_key > today){ 
-            
+        }else if(week_day !== block_check_in && block_check_in!==0 && from_who ==='start_date' && unixtime1_key > (today-24*60*60) ){ 
+   
             if(reservation_class !== ' end_reservation'){
-                reservation_class=' check_in_block';
+                reservation_class=' check_in_block 2';
             }
             return [
                 false,
@@ -1443,6 +1449,21 @@ jQuery(document).ready(function ($) {
     
     
     
+        $('.user_tab_menu_close').click(function () {
+//        $('#all_wrapper').css('-webkit-transform', 'translate(0px, 0px)');
+//        $('#all_wrapper').css('-moz-transform', 'translate(0px, 0px)');
+//        $('#all_wrapper').css('-ms-transform', 'translate(0px, 0px)');
+//        $('#all_wrapper').css('-o-transform', 'translate(0px, 0px)');
+        $('#all_wrapper').removeAttr('style');
+        $('#all_wrapper').removeClass('moved_mobile_user');
+//        $('.mobilewrapper-user').css('-webkit-transform', 'translate(-265px, 0px)');
+//        $('.mobilewrapper-user').css('-moz-transform', 'translate(-265px, 0px)');
+//        $('.mobilewrapper-user').css('-ms-transform', 'translate(-265px, 0px)');
+//        $('.mobilewrapper-user').css('-o-transform', 'translate(-265px, 0px)');
+        $('#user_tab_menu_container').removeAttr('style');
+    });
+    
+    
     $('.mobilemenu-close-user').click(function () {
 //        $('#all_wrapper').css('-webkit-transform', 'translate(0px, 0px)');
 //        $('#all_wrapper').css('-moz-transform', 'translate(0px, 0px)');
@@ -1573,6 +1594,13 @@ jQuery(document).ready(function ($) {
     /// stripe
     ////////////////////////////////////////////////////////////////////////////
     $('#pack_select').change(function () {
+        
+        if( $(this).val()!==''){
+            $('.pay_disabled').removeClass('pay_disabled');
+        }else{
+            $('.payments_buttons_wrapper').addClass('pay_disabled');
+        }
+        
         var stripe_pack_id, stripe_ammount, the_pick;
         $("#pack_select option:selected").each(function () {
             stripe_pack_id = $(this).val();
@@ -1806,7 +1834,7 @@ jQuery(document).ready(function ($) {
         google.maps.event.addListener(autocomplete_normal, 'place_changed', function () {
             var place = autocomplete_normal.getPlace();  
             fillInAddress_filter(place);
-            console.log(place);
+          
         
         });
     }
@@ -2349,11 +2377,11 @@ jQuery(document).ready(function ($) {
         $('.main_wrapper').toggleClass('wide');
     });
 
-    $('#accordion_prop_addr, #accordion_prop_details, #accordion_prop_features').on('shown.bs.collapse', function () {
+    $('#accordion_prop_addr, #accordion_prop_details, #accordion_prop_features, #yelp_details').on('shown.bs.collapse', function () {
         $(this).find('h4').removeClass('carusel_closed');
     });
 
-    $('#accordion_prop_addr, #accordion_prop_details, #accordion_prop_features').on('hidden.bs.collapse', function () {
+    $('#accordion_prop_addr, #accordion_prop_details, #accordion_prop_features, #yelp_details').on('hidden.bs.collapse', function () {
         $(this).find('h4').addClass('carusel_closed');
     });
 

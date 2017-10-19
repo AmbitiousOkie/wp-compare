@@ -177,7 +177,7 @@ if( !function_exists('wpestate_display_labels') ):
               
     print'<div class="estate_option_row">
         <div class="label_option_row">'.__('Property Features Label','wpestate').'</div>
-        <div class="option_row_explain">'.__('Update; Custom title instead of Features and Amenities label.','wpestate').'</div>    
+        <div class="option_row_explain">'.__('Custom title instead of Features and Amenities label.','wpestate').'</div>    
             <input  type="text" id="property_features_text"  name="property_features_text"   value="'.$property_features_text.'" size="40"/>
         </div>';
                 

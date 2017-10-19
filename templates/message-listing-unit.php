@@ -2,17 +2,15 @@
 global $post;
 global $userID;
 global $current_user;
-$message_from_user    =   get_post_meta($post->ID, 'message_from_user', true);
-$user = get_user_by( 'id', $message_from_user );
-
-$message_from_user_name=   $user->user_login;
-
-$message_status       =   get_post_meta($post->ID, 'message_status'.$userID, true);
-$message_title        =   get_the_title($post->ID);
-$message_content      =   get_the_content();
+$message_from_user      =   get_post_meta($post->ID, 'message_from_user', true);
+$user                   =   get_user_by( 'id', $message_from_user );
+$message_from_user_name =   $user->user_login;
+$message_status         =   get_post_meta($post->ID, 'message_status'.$userID, true);
+$message_title          =   get_the_title($post->ID);
+$message_content        =   get_the_content();
 ?>
 
-<div class="col-md-12">
+<div class="col-md-12"> 
     <div class="message_listing " data-messid="<?php print $post->ID; ?> ">
 
         <div class="message_header">

@@ -23,6 +23,7 @@ get_template_part('templates/property_header2');
 ?>
 
 
+
 <div class="row content-fixed-listing">
     <?php //get_template_part('templates/breadcrumbs'); ?>
     <div class=" <?php 
@@ -154,6 +155,28 @@ get_template_part('templates/property_header2');
             ?>
         </div>
         
+         <!-- Yelp -->
+        <div class="panel-wrapper">
+            <?php                                       
+            $yelp_client_id         =   get_option('wp_estate_yelp_client_id','');
+            $yelp_client_secret     =   get_option('wp_estate_yelp_client_secret','');
+            if($yelp_client_secret!=='' && $yelp_client_id!==''  ){
+                print'<a class="panel-title" id="yelp_details" data-toggle="collapse" data-parent="#yelp_details" href="#collapseFive"><span class="panel-title-arrow"></span>'.esc_html__( 'What\'s Nearby', 'wpestate').'  </a>';
+            }else{
+                print '<a class="panel-title" id="yelp_details" data-toggle="collapse" data-parent="#yelp_details" href="#collapseFive"><span class="panel-title-arrow"></span>'. $property_features_text.'</a>';
+            }
+            ?>
+            
+            <div id="collapseFive" class="panel-collapse collapse in">
+                <div class="panel-body panel-body-border">
+                    <?php print wpestate_yelp_details($post->ID); ?>
+                </div>
+            </div>
+
+        </div>
+        
+        
+        
         <?php
         get_template_part ('/templates/show_avalability');
     
@@ -187,7 +210,7 @@ get_template_part('templates/property_header2');
 
 <div class="full_width_row">
     
-            <?php     get_template_part ('/templates/listing_reviews'); ?>
+    <?php get_template_part ('/templates/listing_reviews'); ?>
      
     
     
@@ -203,6 +226,7 @@ get_template_part('templates/property_header2');
         <div id="gmapzoomplus"></div>
         <div id="gmapzoomminus"></div>
         <div id="gmapstreet"></div>
+        <?php echo wpestate_show_poi_onmap();?>
     
         <div id="google_map_on_list" 
             data-cur_lat="<?php   echo $gmap_lat;?>" 
@@ -212,8 +236,7 @@ get_template_part('templates/property_header2');
     </div>    
     
  
-            <?php   get_template_part ('/templates/similar_listings');?>
-    
+    <?php   get_template_part ('/templates/similar_listings');?>
 
 </div>
 

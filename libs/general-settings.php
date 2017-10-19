@@ -169,6 +169,26 @@ function wpestate_widgets_init() {
         'before_title' => '<h3 class="widget-title-sidebar">',
         'after_title' => '</h3>',
     ));
+    
+      register_sidebar(array(
+        'name' => __('Splash Page Bottom Right Widget Area', 'wpestate'),
+        'id' => 'splash-page_bottom-right-widget-area',
+        'description' => __('Splash Page - Bottom right area', 'wpestate'),
+        'before_widget' => '<li id="%1$s" class="splash_page_widget widget-container %2$s">',
+        'after_widget' => '</li>',
+        'before_title' => '<h3 class="widget-title-topbar">',
+        'after_title' => '</h3>',
+    ));
+    
+    register_sidebar(array(
+        'name' => __('Splash Page Bottom Left Widget Area', 'wpestate'),
+        'id' => 'splash-page_bottom-left-widget-area',
+        'description' => __('Splash Page - Bottom left area', 'wpestate'),
+        'before_widget' => '<li id="%1$s" class="splash_page_widget widget-container %2$s">',
+        'after_widget' => '</li>',
+        'before_title' => '<h3 class="widget-title-topbar">',
+        'after_title' => '</h3>',
+    ));
 }
 endif; // end   wpestate_widgets_init  
 

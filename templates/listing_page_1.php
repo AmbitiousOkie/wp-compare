@@ -28,6 +28,8 @@ global $guests;
 global $bedrooms;
 global $bathrooms;
 global $show_sim_two;
+global $guest_list;
+global $post_id;
 
 $price              =   intval   ( get_post_meta($post->ID, 'property_price', true) );
 $price_label        =   esc_html ( get_post_meta($post->ID, 'property_label', true) );  
@@ -42,8 +44,6 @@ if(isset($_GET['guest_no_prop'])){
 $guest_list= wpestate_get_guest_dropdown('noany');
 ?>
 
-
-   
 
 <div class="row content-fixed-listing listing_type_1">
     <?php //get_template_part('templates/breadcrumbs'); ?>
@@ -66,6 +66,14 @@ $guest_list= wpestate_get_guest_dropdown('noany');
         
      
     <div class="single-content listing-content">
+        
+        <?php
+        if ( wp_is_mobile() ) {
+            get_template_part ('templates/booking_form_template');
+        }
+        ?>
+        
+        
         <h1 class="entry-title entry-prop"><?php the_title(); ?>        
             <span class="property_ratings">
                 <?php 
@@ -126,9 +134,29 @@ $guest_list= wpestate_get_guest_dropdown('noany');
                     echo $property_category;?> <span class="property_header_separator">|</span> 
                 <?php } ?> 
                     
-                <?php print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guests','wpestate').'</span>';?> <span class="property_header_separator">|</span>
-                <?php print '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedrooms','wpestate').'</span>';?><span class="property_header_separator">|</span>
-                <?php print '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Baths','wpestate').'</span>';?>
+                <?php  
+                if($guests==1){
+                    print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guest','wpestate').'</span>';
+                }else{
+                    print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guests','wpestate').'</span>';
+                }    
+                ?><span class="property_header_separator">|</span>
+                
+                <?php  
+                if($bedrooms==1){
+                    print  '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedroom','wpestate').'</span>';
+                }else{
+                    print  '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedrooms','wpestate').'</span>';
+                }
+                ?><span class="property_header_separator">|</span>
+                
+                <?php 
+                if($bathrooms==1){
+                    print  '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Bath','wpestate').'</span>';
+                }else{
+                    print  '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Baths','wpestate').'</span>';
+                }
+                ?>
             </div>
 
             <a href="#listing_calendar" class="check_avalability"><?php esc_html_e('Check Availability','wpestate');?></a>
@@ -153,6 +181,7 @@ $guest_list= wpestate_get_guest_dropdown('noany');
                 print '<div class="panel-body">'.$content.'</div>';       
             }
         ?>
+             
         </div>
         <div id="view_more_desc"><?php esc_html_e('View more','wpestate');?></div>
      
@@ -185,11 +214,14 @@ $guest_list= wpestate_get_guest_dropdown('noany');
                     esc_html_e('Property Address','wpestate');
                 }
                 ?>
-            </a>    
+            </a>   
+            
+            
             <div id="collapseTwo" class="panel-collapse collapse in">
                 <div class="panel-body panel-body-border">
                     <?php print estate_listing_address($post->ID); ?>
                 </div>
+                
             </div>
         </div>
       
@@ -234,8 +266,27 @@ $guest_list= wpestate_get_guest_dropdown('noany');
             ?>
         </div>
         
-         
-       
+        <!-- Yelp -->
+        <div class="panel-wrapper yelp_wrapper">
+            <?php                                       
+            $yelp_client_id         =   get_option('wp_estate_yelp_client_id','');
+            $yelp_client_secret     =   get_option('wp_estate_yelp_client_secret','');
+            if($yelp_client_secret!=='' && $yelp_client_id!==''  ){
+                print'<a class="panel-title" id="yelp_details" data-toggle="collapse" data-parent="#yelp_details" href="#collapseFive"><span class="panel-title-arrow"></span>'.esc_html__( 'What\'s Nearby', 'wpestate').'  </a>';
+            }else{
+                    print '<a class="panel-title" id="yelp_details" data-toggle="collapse" data-parent="#yelp_details" href="#collapseFive"><span class="panel-title-arrow"></span>'. $property_features_text.'</a>';
+            }
+            ?>
+            
+            <div id="collapseFive" class="panel-collapse collapse in">
+                <div class="panel-body panel-body-border">
+                    <?php print wpestate_yelp_details($post->ID); ?>
+                </div>
+            </div>
+
+        </div>
+            
+
         <div class="property_page_container ">
             <?php
             get_template_part ('/templates/show_avalability');
@@ -247,17 +298,10 @@ $guest_list= wpestate_get_guest_dropdown('noany');
         endwhile; // end of the loop
         $show_compare=1;
         ?>
-        
-        
-        
-      
+
         <?php     get_template_part ('/templates/listing_reviews'); ?>
 
-    
-        
-       
-        
-    
+
         
         </div><!-- end single content -->
         
@@ -267,7 +311,8 @@ $guest_list= wpestate_get_guest_dropdown('noany');
                 <div id="gmapzoomplus"></div>
                 <div id="gmapzoomminus"></div>
                 <div id="gmapstreet"></div>
-
+                <?php echo wpestate_show_poi_onmap();?>
+                
                 <div id="google_map_on_list" 
                     data-cur_lat="<?php   echo $gmap_lat;?>" 
                     data-cur_long="<?php echo $gmap_long ?>" 
@@ -297,138 +342,15 @@ $guest_list= wpestate_get_guest_dropdown('noany');
         }
         ?> 
         widget-area-sidebar listingsidebar2 listing_type_1" id="primary" >
-        
-            <div class="listing_main_image_price">
-                <?php  
-                
-                $price_per_guest_from_one       =   floatval( get_post_meta($post->ID, 'price_per_guest_from_one', true) ); 
-                  
-                $price          = floatval( get_post_meta($post->ID, 'property_price', true) );
-                wpestate_show_price($post->ID,$currency,$where_currency,0); 
-                if($price!=0){
-                    if( $price_per_guest_from_one == 1){
-                        echo ' '.esc_html__( 'per guest','wpestate'); 
-                    }else{
-                        echo ' '.esc_html__( 'per night','wpestate'); 
-                    }
-                }
-                ?>
-            </div>
-        
-            <div class="booking_form_request" id="booking_form_request">
-            <div id="booking_form_request_mess"></div>
-            <h3 ><?php esc_html_e('Book Now','wpestate');?></h3>
-             
-                <div class="has_calendar calendar_icon">
-                    <input type="text" id="start_date" placeholder="<?php esc_html_e('Check in','wpestate'); ?>"  class="form-control calendar_icon" size="40" name="start_date" 
-                            value="<?php if( isset($_GET['check_in_prop']) ){
-                               echo sanitize_text_field ( $_GET['check_in_prop'] );
-                            }
-                            ?>">
-                </div>
-
-                <div class=" has_calendar calendar_icon">
-                    <input type="text" id="end_date" disabled placeholder="<?php esc_html_e('Check Out','wpestate'); ?>" class="form-control calendar_icon" size="40" name="end_date" 
-                           value="<?php if( isset($_GET['check_out_prop']) ){
-                               echo sanitize_text_field ( $_GET['check_out_prop'] );
-                            }
-                            ?>">
-                </div>
-
-                <div class=" has_calendar guest_icon ">
-                    <?php 
-                    $max_guest = get_post_meta($post_id,'guest_no',true);
-                    print '
-                    <div class="dropdown form-control">
-                        <div data-toggle="dropdown" id="booking_guest_no_wrapper" class="filter_menu_trigger" data-value="';
-                        if(isset($_GET['guest_no_prop']) && $_GET['guest_no_prop']!=''){
-                            echo esc_html( $_GET['guest_no_prop'] );
-                        }else{
-                          echo 'all';
-                        }
-                
-                       
-                        print '">';
-                         
-                        if(isset($_GET['guest_no_prop']) && $_GET['guest_no_prop']!=''){
-                            echo esc_html( $_GET['guest_no_prop'] ).' '.esc_html__( 'guests','wpestate');
-                        }else{
-                            esc_html_e('Guests','wpestate');
-                        }
-                
-                        print'<span class="caret caret_filter"></span>
-                        </div>           
-                        <input type="hidden" name="booking_guest_no"  value="">
-                        <ul  class="dropdown-menu filter_menu" role="menu" aria-labelledby="booking_guest_no_wrapper" id="booking_guest_no_wrapper_list">
-                            '.$guest_list.'
-                        </ul>        
-                    </div>';
-                    ?> 
-                </div>
-                
-            
-                <?php
-                // shw extra options
-                wpestate_show_extra_options_booking($post_id)
-                ?>
-            
-
-                <p class="full_form " id="add_costs_here"></p>            
-
-                <input type="hidden" id="listing_edit" name="listing_edit" value="<?php echo $post_id;?>" />
-
-                <div class="submit_booking_front_wrapper">
-                    <?php   
-                    $overload_guest                 =   floatval   ( get_post_meta($post_id, 'overload_guest', true) );
-                    $price_per_guest_from_one       =   floatval   ( get_post_meta($post_id, 'price_per_guest_from_one', true) );
-                    ?>
-                    
-                    <?php  $instant_booking                 =   floatval   ( get_post_meta($post_id, 'instant_booking', true) ); 
-                    if($instant_booking ==1){ ?>
-                        <div id="submit_booking_front_instant_wrap"><input type="submit" id="submit_booking_front_instant" data-maxguest="<?php echo $max_guest; ?>" data-overload="<?php echo $overload_guest;?>" data-guestfromone="<?php echo $price_per_guest_from_one; ?>"  class="wpb_btn-info wpb_btn-small wpestate_vc_button  vc_button" value=" <?php esc_html_e('Instant Booking','wpestate');?>" /></div>
-                    <?php }else{?>   
-                        <input type="submit" id="submit_booking_front" data-maxguest="<?php echo $max_guest; ?>" data-overload="<?php echo $overload_guest;?>" data-guestfromone="<?php echo $price_per_guest_from_one; ?>"  class="wpb_btn-info wpb_btn-small wpestate_vc_button  vc_button" value="<?php esc_html_e('Book Now','wpestate');?>" />
-                    <?php }?>
-
-
-                    <?php wp_nonce_field( 'booking_ajax_nonce', 'security-register-booking_front' );?>
-                </div>
-
-                <div class="third-form-wrapper">
-                    <div class="col-md-6 reservation_buttons">
-                        <div id="add_favorites" class=" <?php print $favorite_class;?>" data-postid="<?php the_ID();?>">
-                            <?php echo $favorite_text;?>
-                        </div>                 
-                    </div>
-
-                    <div class="col-md-6 reservation_buttons">
-                        <div id="contact_host" class="col-md-6"  data-postid="<?php the_ID();?>">
-                            <?php esc_html_e('Contact Owner','wpestate');?>
-                        </div>  
-                    </div>
-                </div>
-                
-                <?php 
-                if (has_post_thumbnail()){
-                    $pinterest = wp_get_attachment_image_src(get_post_thumbnail_id(),'wpestate_property_full_map');
-                }
-                ?>
-
-                <div class="prop_social">
-                    <span class="prop_social_share"><?php esc_html_e('Share','wpestate');?></span>
-                    <a href="http://www.facebook.com/sharer.php?u=<?php echo esc_url(get_permalink()); ?>&amp;t=<?php echo urlencode(get_the_title()); ?>" target="_blank" class="share_facebook"><i class="fa fa-facebook fa-2"></i></a>
-                    <a href="http://twitter.com/home?status=<?php echo urlencode(get_the_title() .' '.esc_url( get_permalink()) ); ?>" class="share_tweet" target="_blank"><i class="fa fa-twitter fa-2"></i></a>
-                    <a href="https://plus.google.com/share?url=<?php echo esc_url(get_permalink()); ?>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" target="_blank" class="share_google"><i class="fa fa-google-plus fa-2"></i></a> 
-                    <?php if (isset($pinterest[0])){ ?>
-                        <a href="http://pinterest.com/pin/create/button/?url=<?php echo esc_url(get_permalink()); ?>&amp;media=<?php echo $pinterest[0];?>&amp;description=<?php echo urlencode(get_the_title()); ?>" target="_blank" class="share_pinterest"> <i class="fa fa-pinterest fa-2"></i> </a>      
-                    <?php } ?>           
-                </div>             
-
-        </div>
-        
+        <?php
+        if ( !wp_is_mobile() ) {
+            get_template_part ('templates/booking_form_template');
+        }
+        ?>
         <div class="owner_area_wrapper_sidebar" id="listing_owner">
             <?php get_template_part ('/templates/owner_area2'); ?>
         </div>
+        
         
         <?php  include(locate_template('sidebar-listing.php')); ?>
     </div>

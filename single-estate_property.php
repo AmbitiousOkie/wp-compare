@@ -151,42 +151,13 @@ if($options['content_class']=='col-md-12'){
 ?>
 
 
- <!-- Modal -->
-<div class="modal fade" id="instant_booking_modal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header"> 
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h2 class="modal-title_big" ><?php esc_html_e( 'Confirm your booking','wpestate');?></h2>
-                <h4 class="modal-title" id="myModalLabel"><?php esc_html_e( 'Review the dates and confirm your booking','wpestate');?></h4>
-            </div>
 
-            <div class="modal-body"></div>
-
-
-
-
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</div>
 
 
 
 <?php
 
 
-    if ( isset($_GET['check_in_prop']) && isset($_GET['check_out_prop'])  && isset($_GET['guest_no_prop'])   ){
-
-        print '<script type="text/javascript">
-                //<![CDATA[
-                jQuery(document).ready(function(){
-                    jQuery("#end_date,#start_date").parent().removeClass("calendar_icon");
-                    jQuery("#end_date").trigger("change");
-                });
-                //]]>
-        </script>';
-
-    }
+  
 //if( is_user_logged_in() ){}
 ?>

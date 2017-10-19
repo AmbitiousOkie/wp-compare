@@ -309,7 +309,7 @@ function wpestate_scripts() {
         if(is_tax()) {
             $bypass_fit_bounds=1;
         }
-        
+        wp_enqueue_script('wprentals_pin',trailingslashit( get_template_directory_uri() ).'js/google_js/rentals_pin.js',array('jquery'), '1.0', true);  
         wp_enqueue_script('wpestate_oms.min',trailingslashit( get_template_directory_uri() ).'js/google_js/oms.min.js',array('jquery'), '1.0', true);   
         wp_enqueue_script('wpestate_mapfunctions', trailingslashit( get_template_directory_uri() ).'js/google_js/mapfunctions.js',array('jquery'), '1.0', true);   
         wp_localize_script('wpestate_mapfunctions', 'mapfunctions_vars', 
@@ -341,6 +341,9 @@ function wpestate_scripts() {
                     'is_tax'               =>  $is_tax, 
                     'is_property_list'     =>  $is_property_list,
                     'bypass_fit_bounds'    =>  $bypass_fit_bounds,
+                    'useprice'              =>  esc_html ( get_option('wp_estate_use_price_pins','')),
+                    'use_price_pins_full_price' =>  esc_html ( get_option('wp_estate_use_price_pins_full_price','')),
+                         
                     )
             );   
         wp_enqueue_script('wpestate_markerclusterer', trailingslashit( get_template_directory_uri() ).'js/google_js/markerclusterer.js',array('jquery'), '1.0', true);  
@@ -533,6 +536,7 @@ function wpestate_scripts() {
                     'reserve'               =>  esc_html__( 'Reserve Period','wpestate'),
                     'paypal'                =>  esc_html__( 'Connecting to Paypal! Please wait...','wpestate'),
                     'stripecancel'          =>  esc_html__( 'subscription will be cancelled at the end of the current period','wpestate'),
+                    'max_month_no'          =>  intval   ( get_option('wp_estate_month_no_show','') ),
                 )
      );
     
@@ -835,13 +839,15 @@ function wpestate_admin($hook_suffix) {
         );
      }
 
+    wp_enqueue_script('wpestate_admin', trailingslashit( get_template_directory_uri() ).'/js/admin.js',array('jquery'), '1.0', true); 
+    wp_enqueue_style ('wpestate_colorpicker_css', trailingslashit( get_template_directory_uri() ).'/css/colorpicker.css', false, '1.0', 'all');
+    wp_enqueue_script('wpestate_admin_colorpicker', trailingslashit( get_template_directory_uri() ).'/js/admin_colorpicker.js',array('jquery'), '1.0', true);
+       
+     
     $admin_pages = array('appearance_page_libs/theme-admin','appearance_page_libs/theme-import');
  
     if(in_array($hook_suffix, $admin_pages)) {
-        wp_enqueue_script('wpestate_admin', trailingslashit( get_template_directory_uri() ).'/js/admin.js',array('jquery'), '1.0', true); 
-        wp_enqueue_style ('wpestate_colorpicker_css', trailingslashit( get_template_directory_uri() ).'/css/colorpicker.css', false, '1.0', 'all');
-        wp_enqueue_script('wpestate_admin_colorpicker', trailingslashit( get_template_directory_uri() ).'/js/admin_colorpicker.js',array('jquery'), '1.0', true);
-        wp_enqueue_script('wpestate_config-property', trailingslashit( get_template_directory_uri() ).'/js/config-property.js',array('jquery'), '1.0', true);          
+         wp_enqueue_script('wpestate_config-property', trailingslashit( get_template_directory_uri() ).'/js/config-property.js',array('jquery'), '1.0', true);          
     }
     
     $plup_url = add_query_arg( array(

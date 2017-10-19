@@ -1,1 +1,1 @@
-# WP Rentals 1.20.3
+# WP Rentals 1.20.4

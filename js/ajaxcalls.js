@@ -94,7 +94,7 @@ function start_filtering_ajax_map(newpage) {
         success: function (data) {
             // console.log(data);
             // console.log(data.arguments);
-            jQuery('#advanced_search_map_list').removeClass('move_to_fixed');
+            jQuery('#advanced_search_map_list').removeClass('movetofixed');
             jQuery('#listing_loader').hide();
             jQuery('.listing_loader_title').show();
             jQuery('#listing_ajax_container').empty().append(data.response);
@@ -235,7 +235,7 @@ function  start_filtering_ajax_map_with_map_geo(newpage, ne_lat, ne_lng, sw_lat,
             //console.log(data.arguments);
             //console.log(data.arg1);
             jQuery('.entry-title').remove();  
-            jQuery('#advanced_search_map_list').removeClass('move_to_fixed');
+            jQuery('#advanced_search_map_list').removeClass('movetofixed');
             jQuery('#listing_loader').hide();
             jQuery('.listing_loader_title').show();
             jQuery('#listing_ajax_container').empty().append(data.response);
@@ -880,6 +880,7 @@ function start_filtering(newpage) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 function show_login_form(type, ispop, propid) {
     "use strict";
+   
     var  ajaxurl    =  ajaxcalls_vars.admin_url + 'admin-ajax.php';
     jQuery.ajax({
         type: 'POST',
@@ -888,7 +889,8 @@ function show_login_form(type, ispop, propid) {
             'action'    :   'wpestate_ajax_show_login_form',
             'type'      :   type,
             'ispop'     :   ispop,
-            'propid'    :   propid
+            'propid'    :   propid,
+            'login_modal_type' : login_modal_type,
         },
         success: function (data) {
             jQuery('body').append(data);
@@ -1146,7 +1148,11 @@ function wpestate_login_wd() {
                     ajaxcalls_vars.userid = data.newuser;
                     jQuery('#ajax_login_container').remove();
                 } else {
-                    document.location.href = ajaxcalls_vars.login_redirect;
+                    if(jQuery('body').hasClass('single-estate_property') ){
+                       location.reload();
+                    }else{
+                        document.location.href = ajaxcalls_vars.login_redirect;
+                    }
                 }
                 jQuery('#user_not_logged_in').hide();
                 jQuery('#user_logged_in').show();
@@ -1199,7 +1205,12 @@ function wpestate_login_wd_mobile() {
                     ajaxcalls_vars.userid = data.newuser;
                     jQuery('#ajax_login_container').remove();
                 } else {
-                    document.location.href = ajaxcalls_vars.login_redirect;
+                    if(jQuery('body').hasClass('single-estate_property') ){
+                        location.reload();
+                    }else{
+                        document.location.href = ajaxcalls_vars.login_redirect;
+                    }
+                  
                 }
                 jQuery('#user_not_logged_in').hide();
                 jQuery('#user_logged_in').show();
@@ -1241,7 +1252,11 @@ function wpestate_login_topbar() {
         success: function (data) {
             jQuery('#login_message_area_topbar').empty().append('<div class="login-alert">' + data.message + '<div>');
             if (data.loggedin === true) {
-                document.location.href = ajaxcalls_vars.login_redirect;
+                if(jQuery('body').hasClass('single-estate_property') ){
+                    location.reload();
+                }else{
+                    document.location.href = ajaxcalls_vars.login_redirect;
+                }
             } else {
                 jQuery('#login_user').val('');
                 jQuery('#login_pwd').val('');
@@ -1590,12 +1605,27 @@ function wpestate_login_sh() {
                     ajaxcalls_vars.userid = data.newuser;
                     jQuery('#loginmodal').modal('hide');
                    // update_menu_bar(data.newuser);
-                    document.location.href = ajaxcalls_vars.login_redirect;
-                } else {
-                    if(data.newlink!==''){
-                        document.location.href = data.newlink;
+                    
+                    if(jQuery('body').hasClass('single-estate_property') ){
+                        location.reload();
                     }else{
                         document.location.href = ajaxcalls_vars.login_redirect;
+                    }
+                } else {
+                    if(data.newlink!==''){
+                       
+                        if(jQuery('body').hasClass('single-estate_property') ){
+                            location.reload();
+                        }else{
+                            document.location.href = data.newlink;
+                        }
+                        
+                    }else{
+                        if(jQuery('body').hasClass('single-estate_property') ){
+                           location.reload();
+                        }else{
+                            document.location.href = ajaxcalls_vars.login_redirect;
+                        }
                     }
                    
                 }
@@ -2353,7 +2383,7 @@ jQuery(document).ready(function ($) {
                 
             },
             success: function (data) {
-   
+
                 $('#profile_message').empty().append('<div class="login-alert">' + data + '<div>');
             },
             error: function (errorThrown) {

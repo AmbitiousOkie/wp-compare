@@ -340,6 +340,10 @@ jQuery(document).ready(function ($) {
     });
     
     
+    //////////////////////////////////////////////////////////////////////////////////////
+    /// print invoice
+    ///////////////////////////////////////////////////////////////////////////////////////
+    
     
     
     //////////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +370,7 @@ jQuery(document).ready(function ($) {
                 jQuery('.create_invoice_form').remove();
                 parent.after(data);
                 create_payment_action();
+                create_print_action();
             },
             error: function (errorThrown) {
             }
@@ -402,6 +407,7 @@ jQuery(document).ready(function ($) {
                 jQuery('.create_invoice_form').remove();
                 parent.after(data);
                 create_payment_action();
+                create_print_action();
             },
             error: function (errorThrown) {
                 console.log(errorThrown);
@@ -1164,6 +1170,7 @@ function enable_invoice_actions(){
                 jQuery('.create_invoice_form').remove();
                 parent.append(data);
                 create_payment_action();
+                create_print_action();
             },
             error: function (errorThrown) {
             }
@@ -1171,3 +1178,39 @@ function enable_invoice_actions(){
     });
 
 }
+
+function create_print_action(){
+        jQuery('#print_invoice').click(function(event){
+
+        var  myWindow, ajaxurl;
+        ajaxurl     =   control_vars.admin_url + 'admin-ajax.php';
+        event.preventDefault();
+        var invoice_id = jQuery(this).attr('data-invoice_id');
+            
+          
+            
+        myWindow=window.open('','Print Me','width=700 ,height=842');
+        jQuery.ajax({    
+                type: 'POST',
+                url: ajaxurl,  
+            data: {
+                'action'        :   'ajax_create_print',
+                'invoice_id'        :   invoice_id, 
+            },
+            success:function(data) {  
+                myWindow.document.write(data); 
+                myWindow.document.close();
+                myWindow.focus();
+                // setTimeout(function(){
+                // myWindow.print();
+                // }, 3000);
+                //     myWindow.close();
+            },
+            error: function(errorThrown){
+            }
+
+        });//end ajax  var ajaxurl      =   control_vars.admin_url+'admin-ajax.php';     
+    });
+}
+    
+    

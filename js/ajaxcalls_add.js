@@ -319,12 +319,13 @@ function allin_one_owner_insert_book_internal() {
     var curent_m,curent_m_set, input , defaultBounds, options, componentForm, autocomplete, place, calendar_click, calendar_click_price;
     curent_m=2;
     curent_m_set=1;
-    
+    var max_month = parseInt(ajaxcalls_vars.max_month_no);
+   
     $('#calendar-next').click(function () {
-        if (curent_m < 10) {
+        if (curent_m < (max_month-2) ) {
             curent_m = curent_m + 1;
         } else {
-            curent_m = 12;
+            curent_m = max_month;
         }
 
         $('.booking-calendar-wrapper').hide();
@@ -356,10 +357,10 @@ function allin_one_owner_insert_book_internal() {
 
 
     $('#calendar-next-internal').click(function () {
-        if (curent_m < 10) {
+        if (curent_m < (max_month-2)) {
             curent_m = curent_m + 1;
         } else {
-            curent_m = 11;
+            curent_m = max_month-1;
         }
 
         $(".booking-calendar-wrapper-in").hide();
@@ -411,10 +412,10 @@ function allin_one_owner_insert_book_internal() {
     });
     
        $('#calendar-next-internal-set').click(function () {
-        if (curent_m_set < 10) {
+        if (curent_m_set < (max_month-2)) {
             curent_m_set = curent_m_set + 1;
         } else {
-            curent_m_set = 11;
+            curent_m_set = max_month-1;
         }
 
         $(".booking-calendar-wrapper-in").hide();
@@ -449,10 +450,10 @@ function allin_one_owner_insert_book_internal() {
     
     $('#calendar-next-internal-allinone').click(function () {
       
-        if (curent_m_set < 10) {
+        if (curent_m_set < (max_month-2) )  {
             curent_m_set = curent_m_set + 1;
         } else {
-            curent_m_set = 11;
+            curent_m_set = max_month-1;
         }
 
         $(".booking-calendar-wrapper-allinone ").hide();
@@ -472,10 +473,10 @@ function allin_one_owner_insert_book_internal() {
     
    // booking-calendar-wrapper-in-price
     $('#calendar-next-internal-price').click(function () {
-        if (curent_m < 10) {
+        if (curent_m < (max_month-2) ) {
             curent_m = curent_m + 1;
         } else {
-            curent_m = 11;
+            curent_m = max_month-1;
         }
 
         $(".booking-calendar-wrapper-in-price").hide();

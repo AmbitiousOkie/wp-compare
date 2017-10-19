@@ -85,6 +85,7 @@ function wp_estate_setup() {
         add_option('wp_estate_header_type', 4); 
         add_option('wp_estate_user_header_type', 0); 
         add_option('wp_estate_prop_no', '12');
+
         add_option('wp_estate_show_empty_city', 'no');
         add_option('wp_estate_blog_sidebar', 'right');
         add_option('wp_estate_blog_sidebar_name', 'primary-widget-area');
@@ -189,7 +190,8 @@ function wp_estate_setup() {
         add_option('wp_estate_wide_footer','no');
         add_option('wp_estate_map_max_pins',30);
         
-        
+        add_option('wp_estate_guest_dropdown_no','15');
+        add_option('wp_estate_month_no_show','12');
         // defaul emails 
         
 

@@ -201,23 +201,23 @@ $reservation_class  =   '';
         $now=date('Y-m-d');
         $date = new DateTime();
 
-        $thismonth = gmdate('m', $time_now);
-        $thisyear  = gmdate('Y', $time_now);
+        $thismonth  = gmdate('m', $time_now);
+        $thisyear   = gmdate('Y', $time_now);
+        $unixmonth  = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
+        $last_day   = date('t', $unixmonth);
+        
+        $max_month_no   =   intval   ( get_option('wp_estate_month_no_show','') );
+        $month_no       =   1;
+        while ($month_no < $max_month_no){
 
-        $unixmonth = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
-        $last_day = date('t', $unixmonth);
+            wpestate_draw_month($month_no,$reservation_array, $unixmonth, $daywithpost,$thismonth,$thisyear,$last_day);
 
-        $month_no=1;
-            while ($month_no<12){
-
-                wpestate_draw_month($month_no,$reservation_array, $unixmonth, $daywithpost,$thismonth,$thisyear,$last_day);
-
-                $date->modify( 'first day of next month' );
-                $thismonth=$date->format( 'm' );
-                $thisyear  = $date->format( 'Y' );
-                $unixmonth = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
-                $month_no++;
-            }
+            $date->modify( 'first day of next month' );
+            $thismonth=$date->format( 'm' );
+            $thisyear  = $date->format( 'Y' );
+            $unixmonth = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
+            $month_no++;
+        }
 
     }
 

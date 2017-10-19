@@ -497,37 +497,34 @@ function rcapi_create_new_user($user_id,$user_name,$password,$user_email){
 
 function rcapi_update_user($user_id,$arguments){
     //return;    
-    
+
     $token= rcapi_retrive_token();
     
     $values_array=array(
         "original_user_id"  =>   $user_id,
         "arguments"         =>   $arguments,
     );
- 
+   
     // save sms content
     $url="http://www.rentalsclub.org/wp-json/rcapi/v1/subuser/edit/?access_token=".$token;
     $arguments = array(
-	'method' => 'POST',
-	'timeout' => 45,
-	'redirection' => 5,
-	'httpversion' => '1.0',
-	'blocking' => true,
-	'headers' => array(),
-	'body' => $values_array,
-	'cookies' => array()
+	'method'        => 'POST',
+	'timeout'       => 45,
+	'redirection'   => 5,
+	'httpversion'   => '1.0',
+	'blocking'      => true,
+	'headers'       => array(),
+	'body'          => $values_array,
+	'cookies'       => array()
     );
     
     $response= wp_remote_post($url,$arguments);
- 
-   // return;
-
-    //print_r(json_decode( wp_remote_retrieve_body($response) ,true));
     $rcapi_user_id =  json_decode( wp_remote_retrieve_body($response) ,true);
-    
     update_user_meta($user_id,'rcapi_user_id',$rcapi_user_id);
-    
 }
+
+
+
 
 function rcapi_create_new_listing($user_id,$listing_id,$submit_title,$property_description,$new_status,$prop_category_name,$prop_action_category_name,$property_city,$property_area,$guest_no,$property_admin_area,$property_country,$instant_booking){
    // return;    

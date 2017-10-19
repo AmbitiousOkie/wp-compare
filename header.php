@@ -32,7 +32,7 @@
         $top_menu_hover_type        =   get_option('wp_estate_top_menu_hover_type',''); 
         
         
-        if( !is_404() && !is_tax() && !is_category() && !is_tag() && isset($post->ID) && wpestate_check_if_admin_page($post->ID)){
+        if( !is_404() && !is_tax() && !is_category() && !is_tag() && isset($post->ID) && wpestate_check_if_admin_page($post->ID) && basename(get_page_template($post->ID)) == 'splash_page.php'){
             $wide_class = " wide ";
         }
   
@@ -164,9 +164,10 @@
         <div class="website-wrapper <?php echo $is_top_bar_class;?>"  id="all_wrapper">
             <div class="container main_wrapper <?php print $wide_class; print $is_dashboard_page; ?> ">
                <div class="master_header <?php print 'master_'.trim($transparent_class) .' '.$wide_class.' '.$header_map_class.' master_'. $header_wide.' hover_type_'.$top_menu_hover_type; ?>">
-
+           
+            
                 <?php
-                if (wpestate_show_top_bar()) {
+                if (wpestate_show_top_bar() && !is_page_template( 'splash_page.php' )) {
                     get_template_part('templates/top_bar');
                 }
                 ?>
@@ -179,7 +180,15 @@
                             <?php $logo_margin = intval(get_option('wp_estate_logo_margin', '')); ?>
                             <div class="logo" <?php echo 'style="margin-top:' . $logo_margin . 'px"'; ?>> 
 
-                                <a href="<?php echo esc_url ( home_url('', 'login') ); ?>">
+                                <a href="<?php
+                                $splash_page_logo_link = get_option('wp_estate_splash_page_logo_link', '');
+                                if (is_page_template('splash_page.php') && $splash_page_logo_link != '') {
+                                    echo $splash_page_logo_link;
+                                } else {
+                                    echo home_url('', 'login');
+                                }
+                                ?>">                                   
+                                   
                                 <?php
                                 $logo='';
                                 if( trim($transparent_class)!==''){
@@ -194,6 +203,8 @@
                                     print '<img class="img-responsive retina_ready" src="' . get_template_directory_uri() . '/img/logo.png" alt="logo"/>';
                                 }
                                 ?>
+                                    
+                                    
                                 </a>
                             
                             </div>   
@@ -205,7 +216,12 @@
                             ?>   
                             
                             <nav id="access">
-                                <?php wp_nav_menu(array('theme_location' => 'primary', 'container' => false)); ?>
+                                <?php wp_nav_menu(array(
+                                            'theme_location'    => 'primary',
+                                            'container'         => false,
+                                            'walker'            => new wpestate_custom_walker()
+                                        )); 
+                                ?>
                             </nav><!-- #access -->
                         </div>
                     </div>

@@ -1,5 +1,59 @@
 <?php
 
+
+
+  add_action( 'wp_ajax_ajax_create_print', 'ajax_create_print' );  
+  
+  if( !function_exists('ajax_create_print') ):
+  function ajax_create_print(){ 
+      
+    if(!isset($_POST['invoice_id'])|| !is_numeric($_POST['invoice_id'])){
+        exit('out pls1');
+    }  
+      
+    $invoice_id          = intval($_POST['invoice_id']);
+    $the_post= get_post( $invoice_id); 
+    if($the_post->post_type!='wpestate_invoice' || $the_post->post_status!='publish'){
+        exit('out pls2');
+    }
+    $title= esc_html__('Invoice','wpestate');
+   
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    // end get agent details
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+    print  '<html><head><title>'.$title.'</title><link href="'.get_stylesheet_uri().'" rel="stylesheet" type="text/css" />';
+    
+     
+    if(is_child_theme()){
+        print '<link href="'.get_template_directory_uri().'/style.css" rel="stylesheet" type="text/css" />';   
+    }
+    
+    if(is_rtl()){
+        print '<link href="'.get_template_directory_uri().'/rtl.css" rel="stylesheet" type="text/css" />';
+    }
+    print '</head>';
+    $protocol = is_ssl() ? 'https' : 'http';
+    print  '<script src="'.$protocol.'://code.jquery.com/jquery-1.10.1.min.js"></script><script>$(window).load(function(){ print(); });</script>';
+    print  '<body class="print_body" >';
+
+     wpestate_super_invoice_details($invoice_id);
+ 
+    print '</body></html>';
+    die();
+  } 
+
+endif;
+
+
+
+
+
+
+
+
+
+
 add_action( 'wp_ajax_wpestate_send_valid_sms', 'wpestate_send_valid_sms' );  
 
 if( !function_exists('wpestate_send_valid_sms') ):
@@ -37,7 +91,7 @@ if( !function_exists('wpestate_send_valid_sms') ):
 endif;
 
 
-add_action( 'wp_ajax_wpestate_validate_mobile', 'wpestate_validate_mobile' );  
+
 add_action( 'wp_ajax_wpestate_validate_mobile', 'wpestate_validate_mobile' );  
 
 if( !function_exists('wpestate_validate_mobile') ):
@@ -375,11 +429,13 @@ add_action( 'wp_ajax_wpestate_admin_activate_reservation_fee', 'wpestate_admin_a
 if( !function_exists('wpestate_admin_activate_reservation_fee') ):
     function wpestate_admin_activate_reservation_fee(){
        
-        $current_user = wp_get_current_user();
       
-        if( !current_user_can('administrator') ){
+      
+       $current_user = wp_get_current_user();
+        if ( !is_user_logged_in() ) {   
             exit('out pls');
         }
+        
         $booking_id         =   intval($_POST['book_id']);
         $invoice_id         =   intval($_POST['invoice_id']);
         $owner_id           =   get_post_meta($invoice_id, 'buyer_id', true);
@@ -1772,12 +1828,9 @@ if( !function_exists('wpestate_ajax_loginx_form_topbar') ):
             global $current_user;
             $current_user = wp_get_current_user();
     
-             
-          
-             
-             
-             echo json_encode(array('loggedin'=>true,'newuser'=>$user_signon->ID, 'message'=>esc_html__( 'Login successful, redirecting...','wpestate')));
-             wpestate_update_old_users($user_signon->ID);
+            echo json_encode(array('loggedin'=>true,'newuser'=>$user_signon->ID, 'message'=>esc_html__( 'Login successful, redirecting...','wpestate')));
+            wpestate_update_old_users($user_signon->ID);
+            wpestate_calculate_new_mess();
              
         }
         die();           
@@ -1843,6 +1896,7 @@ if( !function_exists('wpestate_ajax_loginx_form') ):
             
             
             echo json_encode(array('loggedin'=>true,'ispop'=>$ispop,'newuser'=>$user_signon->ID,'newlink'=>html_entity_decode($redirect_url), 'message'=>esc_html__( 'Login successful, redirecting...','wpestate')));
+            wpestate_calculate_new_mess();
             wpestate_update_old_users($user_signon->ID);
         }
         die(); 
@@ -2228,12 +2282,21 @@ if( !function_exists('wpestate_ajax_show_contact_owner_form') ):
 
     function wpestate_ajax_show_contact_owner_form(){
     
-        $post_id=intval($_POST['booking_id']);
-        if($post_id==0){
-            $agent_id=intval($_POST['agent_id']);
+//        $post_id=intval($_POST['booking_id']);
+//        if($post_id==0){
+//            $agent_id=intval($_POST['agent_id']);
+//        }else{
+//            $agent_id=0;
+//        }
+        global $post;
+        if(is_singular('estate_property')){
+            $post_id    =   $post->ID;
+            $agent_id   =   0;
         }else{
-            $agent_id=0;
+            $agent_id   =   $post->ID;
+            $post_id    =   0;
         }
+      
 
     
         print'
@@ -2333,6 +2396,18 @@ if( !function_exists('wpestate_ajax_show_login_form') ):
             $show_register  =   'show';
         }
 
+        $login_text= intval($_POST['login_modal_type']);
+        
+        
+        $mesaj_big  =   esc_html__( 'Start Listing Properties','wpestate');
+        $sub_mesaj  =   esc_html__( 'Please fill the login or register forms','wpestate');
+        if($login_text==2){
+            $mesaj_big  =   esc_html__( 'Please login!','wpestate');
+            $sub_mesaj  =   esc_html__( 'You need to login in order to send a message','wpestate');
+        }else if($login_text==3){
+            $mesaj_big  =   esc_html__( 'Please login!','wpestate');
+            $sub_mesaj  =   esc_html__( 'You need to login in order to book a listing','wpestate');
+        }
         print'
                 <!-- Modal -->
                 <div class="modal fade" id="loginmodal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2340,8 +2415,8 @@ if( !function_exists('wpestate_ajax_show_login_form') ):
                     <div class="modal-content">
                       <div class="modal-header"> 
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h2 class="modal-title_big" >'.esc_html__( 'Start Listing Properties','wpestate').'</h4>
-                        <h4 class="modal-title" id="myModalLabel">'.esc_html__( 'Please fill the login or register forms','wpestate').'</h4>
+                        <h2 class="modal-title_big" >'.$mesaj_big.'</h4>
+                        <h4 class="modal-title" id="myModalLabel">'.$sub_mesaj.'</h4>
                       </div>
 
                        <div class="modal-body">
@@ -4051,7 +4126,7 @@ if( !function_exists('wpestate_ajax_resend_for_approval') ):
             }
             
             if(  $new_status== 'publish'){
-                print esc_html__( 'Published!','wpestate');
+                print '<span class="info-container_status">'.esc_html__( 'Published!','wpestate').'</span>';
             }else{
                 print '<span class="sent_approval">'.esc_html__( 'Sent for approval','wpestate').'</span>';
                 $submit_title   =   get_the_title($prop_id);
@@ -4068,7 +4143,7 @@ if( !function_exists('wpestate_ajax_resend_for_approval') ):
             
            
         }else{
-            print esc_html__( 'no listings available','wpestate');
+            print '<span class="info-container_status">'.esc_html__( 'no listings available','wpestate').'</span>';
         }
         die();
    }

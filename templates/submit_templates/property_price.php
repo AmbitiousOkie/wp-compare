@@ -88,9 +88,10 @@ if( !function_exists('wpestate_get_calendar_price')):
 
         $unixmonth = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
         $last_day = date('t', $unixmonth);
-
-        $month_no=1;
-            while ($month_no<12){
+        
+        $max_month_no   =   intval   ( get_option('wp_estate_month_no_show','') );
+        $month_no       =   1;
+            while ($month_no<$max_month_no){
 
                 wpestate_draw_month_price($edit_id,$property_price,$price_per_guest_from_one,$extra_price_per_guest,$month_no,$custom_price_array,$mega_details, $unixmonth, $daywithpost,$thismonth,$thisyear,$last_day);
 
@@ -319,7 +320,7 @@ endif;
   
 <div class="col-md-12">
     <div class="user_dashboard_panel price_panel ">
-    <h4 class="user_dashboard_panel_title"><?php esc_html_e('Property  Price','wpestate');?></h4>
+    <h4 class="user_dashboard_panel_title"><?php esc_html_e('Property Price','wpestate');?></h4>
 
     <div id="profile_message"></div>
           
@@ -489,14 +490,14 @@ endif;
     
     <div class="row">
         <div class="col-md-3 dashboard_chapter_label">
-            <label for="security_deposit"> <?php esc_html_e('Early Bird Discount - in % from the price per night','wpestate'); ?>  </label>
+            <label for=""> <?php esc_html_e('Early Bird Discount - in % from the price per night','wpestate'); ?>  </label>
         </div>
         <div class="col-md-3">
-            <label for="security_deposit"> <?php esc_html_e('Value in %','wpestate'); ?>  </label>
+            <label for="early_bird_percent"> <?php esc_html_e('Value in %','wpestate'); ?>  </label>
             <input type="text" id="early_bird_percent" class="form-control" size="40" name="early_bird_percent" value="<?php print $early_bird_percent;?>">
         </div>
         <div class="col-md-3">
-            <label for="security_deposit"> <?php esc_html_e('No of days in advance','wpestate'); ?>  </label>
+            <label for="early_bird_days"> <?php esc_html_e('Minim no of days in advance','wpestate'); ?>  </label>
             <input type="text" id="early_bird_days" class="form-control" size="40" name="early_bird_days" value="<?php print $early_bird_days;?>">
         </div>
         <div class="col-md-3"> </div>

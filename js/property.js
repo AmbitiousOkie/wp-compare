@@ -14,15 +14,7 @@ jQuery(window).scroll(function ($) {
 });
 
 
-jQuery(window).scroll(function () {
-    "use strict";
-    if (!jQuery('#booktrigger').is(':in-viewport') ){
-     
-    //    jQuery('#booking_form_request').addClass('fixed_booking');
-    }else{
-      //  jQuery('#booking_form_request').removeClass('fixed_booking');
-    }
-}); 
+
 
 
 jQuery(document).ready(function ($) {
@@ -31,7 +23,7 @@ jQuery(document).ready(function ($) {
     var today, booking_error;
     booking_error = 0;
     today = new Date();
-    
+    wpestare_booking_retrive_cookies();
 
     if( $('#listing_description').outerHeight() > 169 ){
         $('#view_more_desc').show();
@@ -136,6 +128,9 @@ jQuery(document).ready(function ($) {
             jQuery('#show_cost_form').remove(); 
             return;
         }
+        
+        
+        
              
         $.ajax({
             type: 'POST',
@@ -163,27 +158,80 @@ jQuery(document).ready(function ($) {
     
     
     
-    
-    
+  
     
     var booking_started=0;
     $('#end_date').change(function () {
+        var prop_id=jQuery('#listing_edit').val();
+        wpestate_setCookie('booking_prop_id_cookie',  prop_id , 1)
+        wpestate_setCookie('booking_end_date_cookie',  $('#end_date').val() , 1)
+        
         booking_started=1;
         show_booking_costs();
     });
     
     $('#start_date').change(function () {
+        var prop_id=jQuery('#listing_edit').val();
+        wpestate_setCookie('booking_prop_id_cookie',  prop_id , 1)
+        wpestate_setCookie('booking_start_date_cookie',  $('#start_date').val() , 1)
         if( booking_started===1){
             show_booking_costs();
         }
     });
     
     $('#booking_guest_no_wrapper_list li').click(function (){
-
+        var prop_id=jQuery('#listing_edit').val();
+        wpestate_setCookie('booking_prop_id_cookie',  prop_id , 1)
+        var booking_guest_no    =   parseInt( jQuery('#booking_guest_no_wrapper').attr('data-value') ); 
+        wpestate_setCookie('booking_guest_cookie',  booking_guest_no , 1)
         if( booking_started===1){
             show_booking_costs();
         }
     });
+    
+    
+    function wpestare_booking_retrive_cookies(){
+        var booking_guest_cookie        =   wpestate_getCookie( "booking_guest_cookie");
+        var booking_start_date_cookie   =   wpestate_getCookie("booking_start_date_cookie");
+        var booking_end_date_cookie     =   wpestate_getCookie("booking_end_date_cookie");
+        var booking_prop_id             =   wpestate_getCookie("booking_prop_id_cookie");
+        var prop_id                     =   jQuery('#listing_edit').val();
+
+
+
+        if ( prop_id === booking_prop_id &&  property_vars.logged_in==="yes" ){
+            if(booking_start_date_cookie!==''){
+                jQuery('#start_date').val(booking_start_date_cookie);
+            }
+
+            if(booking_end_date_cookie!==''){
+                jQuery('#end_date').val(booking_end_date_cookie);
+            }
+
+            if(booking_guest_cookie!==''){
+                jQuery('#booking_guest_no_wrapper').attr('data-value',booking_guest_cookie);
+                jQuery('#booking_guest_no_wrapper .text_selection').html(booking_guest_cookie+' '+property_vars.guests);
+            }
+
+
+            if(booking_start_date_cookie!=='' && booking_end_date_cookie!=='' && booking_guest_cookie!==''){
+              
+                show_booking_costs();
+            
+                // jQuery('#booking_guest_no_wrapper_list li').trigger('click');
+            }
+
+        }
+
+
+
+
+      //  console.log(booking_prop_id+" / "+prop_id+" =booking_guest_cookie "+ booking_guest_cookie + " / "+booking_start_date_cookie+" / "+booking_end_date_cookie);
+    }
+
+
+
+
     
     $('#booking_form_request li').click(function (event){
         event.preventDefault();
@@ -212,22 +260,35 @@ jQuery(document).ready(function ($) {
     function wpestate_show_contact_owner_form(booking_id, agent_id) {
         var  ajaxurl;
         ajaxurl     =   ajaxcalls_vars.admin_url + 'admin-ajax.php';
-        jQuery.ajax({
-            type: 'POST',
-            url: ajaxurl,
-            data: {
-                'action'    :   'wpestate_ajax_show_contact_owner_form',
-                'booking_id':   booking_id,// is actualy property id,
-                'agent_id'  :   agent_id
-            },
-            success: function (data) {
-                jQuery('body').append(data);
-                jQuery('#contact_owner_modal').modal();
-                enable_actions_modal_contact();
-            },
-            error: function (errorThrown) {
-            }
-        }); //end ajax
+        
+        if( property_vars.logged_in==="yes" ){
+            jQuery('#contact_owner_modal').modal();
+            enable_actions_modal_contact();
+        }else{
+//            jQuery('#contact_owner_modal').modal();
+//            enable_actions_modal_contact();
+            login_modal_type=2;
+            $('#topbarlogin').trigger('click');
+            $('#loginmodal .modal-title_big').text('Vaca paste');
+        }   
+        
+        
+//        jQuery.ajax({
+//            type: 'POST',
+//            url: ajaxurl,
+//            data: {
+//                'action'    :   'wpestate_ajax_show_contact_owner_form',
+//                'booking_id':   booking_id,// is actualy property id,
+//                'agent_id'  :   agent_id
+//            },
+//            success: function (data) {
+//                jQuery('body').append(data);
+//                jQuery('#contact_owner_modal').modal();
+//                enable_actions_modal_contact();
+//            },
+//            error: function (errorThrown) {
+//            }
+//        }); //end ajax
     }
 
 
@@ -386,6 +447,12 @@ jQuery(document).ready(function ($) {
                 new_early_bird=0;
             }
             new_early_bird.toFixed(2);
+            
+              
+           
+          
+            
+            
           
             total_curent    =   total_curent    +   new_early_bird;
             total_curent    =   total_curent    +   total_value;
@@ -395,16 +462,31 @@ jQuery(document).ready(function ($) {
                 var new_early_bird_before_convert =  wpestate_booking_form_currency_convert_back(new_early_bird);
                 new_early_bird.toFixed(2);
             }
+          
+            
+            
             
             total_curent    =   total_curent    -   new_early_bird;
             total_curent    =   total_curent.toFixed(2);
+           
+            var  total_curent_deposit=total_curent;
+            if(control_vars.include_expeses==='no'){
+                var cleaning_fee=parseFloat ( $('.cleaning_fee_value').attr('data_cleaning_fee') );
+                cleaning_fee.toFixed(2);
+                var city_fee=parseFloat ( $('.city_fee_value').attr('data_city_fee') );
+                city_fee.toFixed(2);
+                total_curent_deposit=total_curent_deposit-cleaning_fee-city_fee;
+                total_curent_deposit.toFixed(2);
+            }
+            
+            
             
             $('#total_cost_row .cost_value').text( estate_format_number_with_currency( total_curent ) );
             var total_curent_before_convert = wpestate_booking_form_currency_convert_back(total_curent);
             
             $('#total_cost_row .cost_value').attr('data_total_price',total_curent_before_convert);
              
-            var new_depozit =   wpestate_instant_book_depozit(total_curent);
+            var new_depozit =   wpestate_instant_book_depozit(total_curent_deposit);
             var new_balance =   total_curent-new_depozit;
          
            
@@ -445,11 +527,22 @@ jQuery(document).ready(function ($) {
              
             total_curent = total_curent.toFixed(2);
             
+             var  total_curent_deposit=total_curent;
+            if(control_vars.include_expeses==='no'){
+                var cleaning_fee=parseFloat ( $('.cleaning_fee_value').attr('data_cleaning_fee') );
+                cleaning_fee.toFixed(2);
+                var city_fee=parseFloat ( $('.city_fee_value').attr('data_city_fee') );
+                city_fee.toFixed(2);
+                total_curent_deposit=total_curent_deposit-cleaning_fee-city_fee;
+                total_curent_deposit.toFixed(2);
+            }
+            
+            
             $('#total_cost_row .cost_value').text( estate_format_number_with_currency (total_curent) );
             var total_curent_before_convert = wpestate_booking_form_currency_convert_back(total_curent);
             $('#total_cost_row .cost_value').attr('data_total_price',total_curent_before_convert);
             
-            var new_depozit =   wpestate_instant_book_depozit(total_curent);
+            var new_depozit =   wpestate_instant_book_depozit(total_curent_deposit);
             var new_balance =   total_curent-new_depozit;
              
             $('.instant_depozit_value').text(estate_format_number_with_currency(new_depozit) );
@@ -530,6 +623,7 @@ function wpestate_booking_form_currency_convert_back(display_price){
     
         if(property_vars.logged_in==="no"){
             $('#booking_form_request_mess').show().empty().addClass('book_not_available').append(property_vars.notlog);
+          
         }
         
         var guest_number, guest_overload,guestfromone,max_guest;
@@ -577,6 +671,8 @@ function wpestate_booking_form_currency_convert_back(display_price){
         
         if(property_vars.logged_in==="no"){
             $('#booking_form_request_mess').show().empty().addClass('book_not_available').append(property_vars.notlog);
+            login_modal_type=3;
+            $('#topbarlogin').trigger('click');
         }else{
             $('#booking_form_request_mess').show().empty().removeClass('book_not_available').append(property_vars.sending);
             redo_listing_sidebar();
@@ -635,4 +731,27 @@ function estate_makeSafeForCSS(name) {
         if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
         return '__' + ('000' + c.toString(16)).slice(-4);
     });
+}
+
+function wpestate_setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function wpestate_getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }

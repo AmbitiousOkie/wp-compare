@@ -102,7 +102,7 @@ $google_map_lower_class='';
                     }
                 ?>"> 
                 <?php  
-                if(isset($_GET['guest_no'])){
+                if( isset($_GET['guest_no']) && intval($_GET['guest_no'])!=0 ){
                    echo intval($_GET['guest_no']).' '.esc_html__('guests','wpestate');
                 }else{
                     esc_html_e('Guests','wpestate');

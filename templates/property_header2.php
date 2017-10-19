@@ -31,9 +31,29 @@ global $options;
                         <?php  if( $property_category!='') {
                             echo $property_category;?> <span class="property_header_separator">|</span> 
                         <?php } ?> 
-                        <?php print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guests','wpestate').'</span>';?> <span class="property_header_separator">|</span>
-                        <?php print '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedrooms','wpestate').'</span>';?><span class="property_header_separator">|</span>
-                        <?php print '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Baths','wpestate').'</span>';?>
+                            <?php  
+                            if($guests==1){
+                                print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guest','wpestate').'</span>';
+                            }else{
+                                print '<span class="no_link_details">'.$guests.' '. esc_html__( 'Guests','wpestate').'</span>';
+                            }    
+                            ?><span class="property_header_separator">|</span>
+
+                            <?php  
+                            if($bedrooms==1){
+                                print  '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedroom','wpestate').'</span>';
+                            }else{
+                                print  '<span class="no_link_details">'.$bedrooms.' '.esc_html__( 'Bedrooms','wpestate').'</span>';
+                            }
+                            ?><span class="property_header_separator">|</span>
+
+                            <?php 
+                            if($bathrooms==1){
+                                print  '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Bath','wpestate').'</span>';
+                            }else{
+                                print  '<span class="no_link_details">'.$bathrooms.' '.esc_html__( 'Baths','wpestate').'</span>';
+                            }
+                            ?>
                     </div>
                     
                     <a href="#listing_calendar" class="check_avalability"><?php esc_html_e('Check Availability','wpestate');?></a>
@@ -117,13 +137,13 @@ global $options;
                               echo 'all';
                             }
                         print '">';
-                        
+                        print '<div class="text_selection">';
                         if(isset($_GET['guest_no_prop']) && $_GET['guest_no_prop']!=''){
                             echo esc_html( $_GET['guest_no_prop'] ).' '.esc_html__( 'guests','wpestate');
                         }else{
                             esc_html_e('Guests','wpestate');
                         }
-                 
+                        print '</div>';
                         
                         print '<span class="caret caret_filter"></span>
                         </div>           

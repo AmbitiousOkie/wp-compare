@@ -48,16 +48,25 @@ if( !function_exists('wpestate_emails_filter_replace')):
 endif;
 
 
+function wpestate_set_html_mail_content_type() {
+    return 'text/html';
+}
 
 if( !function_exists('wpestate_send_emails') ):
     function wpestate_send_emails($user_email, $subject, $message ){
+    
+    
+        add_filter( 'wp_mail_content_type', 'wpestate_set_html_mail_content_type' );
+
         $headers = 'From: No Reply <noreply@'.$_SERVER['HTTP_HOST'].'>' . "\r\n";
         @wp_mail(
             $user_email,
             $subject,
             $message,
             $headers
-            );            
+            );      
+        
+        remove_filter( 'wp_mail_content_type', 'wpdocs_set_html_mail_content_type' );
     };
 endif;
 

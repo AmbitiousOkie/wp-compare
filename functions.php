@@ -28,9 +28,11 @@ require_once get_template_directory().'/libs/icalendar.php';
 require_once get_template_directory().'/libs/reviews.php';
 require_once get_template_directory().'/libs/emailfunctions.php';
 require_once get_template_directory().'/libs/sms_functions.php';
+require_once get_template_directory().'/libs/resources/yelp_fusion.php';
+require_once get_template_directory().'/libs/megamenu.php';
 require_once get_template_directory().'/libs/rcapi_functions.php';
 
-//require_once get_template_directory().'/libs/plugins/wordpress-importer.php';
+
 
 
 $facebook_status    =   esc_html( get_option('wp_estate_facebook_login','') );
@@ -965,5 +967,47 @@ function noo_enable_vc_auto_theme_update() {
 	}
 }
 add_action('vc_after_init', 'noo_enable_vc_auto_theme_update');
+
+
+add_filter( 'manage_posts_columns', 'wpestate_add_id_column', 5 );
+add_action( 'manage_posts_custom_column', 'wpestate_id_column_content', 5, 2 );
+add_filter( 'manage_pages_columns', 'wpestate_add_id_column', 5 );
+add_action( 'manage_pages_custom_column', 'wpestate_id_column_content', 5, 2 );
+add_filter( 'manage_media_columns', 'wpestate_add_id_column', 5 );
+add_action( 'manage_media_custom_column', 'wpestate_id_column_content', 5, 2 );
+
+add_action( 'manage_edit-category_columns', 'wpestate_add_id_column',5 );
+add_filter( 'manage_category_custom_column', 'wpestate_categoriesColumnsRow',10,3 );
+
+add_action( 'manage_edit-property_category_columns', 'wpestate_add_id_column',5 );
+add_filter( 'manage_property_category_custom_column', 'wpestate_categoriesColumnsRow',10,3 );
+
+add_action( 'manage_edit-property_action_category_columns', 'wpestate_add_id_column',5 );
+add_filter( 'manage_property_action_category_custom_column', 'wpestate_categoriesColumnsRow',10,3 );
+
+add_action( 'manage_edit-property_city_columns', 'wpestate_add_id_column',5 );
+add_filter( 'manage_property_city_custom_column', 'wpestate_categoriesColumnsRow',10,3 );
+
+
+//add_action( 'manage_edit-property_area_columns', 'wpestate_add_id_column',5 );
+//add_filter( 'manage_property_area_custom_column', 'wpestate_categoriesColumnsRow',10,3 );
+
+function wpestate_add_id_column( $columns ) {
+   $columns['revealid_id'] = 'ID';
+   return $columns;
+}
+
+function wpestate_id_column_content( $column, $id ) {
+  if( 'revealid_id' == $column ) {
+    echo $id;
+  }
+}
+
+
+function wpestate_categoriesColumnsRow($argument, $columnName, $categoryID){
+    if($columnName == 'revealid_id'){
+            return $categoryID;
+    }
+}
 
 ?>

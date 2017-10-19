@@ -130,6 +130,38 @@ function wpestate_new_general_set() {
             'adv_search_label',
         );
         
+        $notifications_email_array=array(
+            'new_user',
+            'admin_new_user',
+            'purchase_activated',
+            'password_reset_request',
+            'password_reseted',
+            'approved_listing',
+            'admin_expired_listing',
+            'paid_submissions',
+            'featured_submission',
+            'account_downgraded',
+            'membership_cancelled',
+            'free_listing_expired',
+            'new_listing_submission',
+            'recurring_payment',
+            'membership_activated',
+            'agent_update_profile',
+            'bookingconfirmeduser',
+            'bookingconfirmed',
+            'bookingconfirmed_nodeposit',
+            'inbox',
+            'newbook',
+            'mynewbook',
+            'newinvoice',
+            'deletebooking',
+            'deletebookinguser',
+            'deletebookingconfirmed',
+            'new_wire_transfer',
+            'admin_new_wire_transfer',
+            'full_invoice_reminder',
+        );
+        
        
         foreach($_POST as $variable=>$value){	
 
@@ -141,13 +173,32 @@ function wpestate_new_general_set() {
                     }
                     
                     $variable   =   sanitize_key($variable);
+                    
                     if($variable=='co_address'){
+                        
                         $allowed_html_br=array(
                                 'br' => array(),
                                 'em' => array(),
                                 'strong' => array()
                         );
                         $postmeta   =   wp_kses($value,$allowed_html_br);
+                        
+                    } elseif ( in_array($variable,$notifications_email_array ) ){
+                        $allowed_html_link=array(
+                            'a' => array(
+                                'href' => array(),
+                                'title' => array()
+                            ),
+                            'img'=>array(
+                                'src' => array()
+                            ),
+                            'br' => array(),
+                            'em' => array(),
+                            'strong' => array(),
+                        );
+                
+                        $postmeta   =   wp_kses($value,$allowed_html_link);
+                        
                     }else{
                         $postmeta   =   wp_kses($value,$allowed_html);
                     
@@ -328,7 +379,8 @@ print ' <div class="wrap">
                 <li data-optiontab="custom_fields_tab"   class="">'.__('Custom Fields','wpestate').'</li>
                 <li data-optiontab="ammenities_features_tab"   class="">'.__('Features & Amenities','wpestate').'</li>
                 <li data-optiontab="listing_labels_tab"   class="">'.__('Listings Labels','wpestate').'</li>   
-                <li data-optiontab="theme_slider_tab"   class="">'.__('Theme Slider','wpestate').'</li>   
+                <li data-optiontab="theme_slider_tab"   class="">'.__('Theme Slider','wpestate').'</li>
+                <li data-optiontab="splash_page_page_tab" class="">'.__('Splash Page','wpestate').'</li>  
             </ul>
         </div>
         
@@ -380,7 +432,7 @@ print ' <div class="wrap">
                 <li data-optiontab="export_settings_tab" class="selected_option">'.__('Export Options','wpestate').'</li>
                 <li data-optiontab="import_settings_tab" class="selected_option">'.__('Import Options','wpestate').'</li>
                 <li data-optiontab="recaptcha_tab" class="selected_option">'.__('reCaptcha settings','wpestate').'</li>
-               
+                <li data-optiontab="yelp_tab" class="selected_option">'.__('Yelp settings','wpestate').'</li>
             </ul>
         </div>
         
@@ -506,6 +558,17 @@ print ' <div class="wrap">
                     </div>
                     </form>
  
+
+                    <form method="post" action="">
+                    <div id="splash_page_page_tab" class="theme_options_tab" style="display:none;">
+                        <h1>'.__('Splash Page','wpestate').'</h1>
+                        <input type="submit" name="submit"  class="new_admin_submit new_admin_submit_right" value="'.__('Save Changes','wpestate').'" />
+                        <div class="theme_option_separator"></div>';
+                        wpestate_splash_page();
+                    print '        
+                    </div>
+                    </form>
+
                 </div>';
                     
                 
@@ -719,7 +782,15 @@ print ' <div class="wrap">
                         </div>
                         </form>
                         
-                        
+                        <form method="post" action="">
+                        <div id="yelp_tab" class="theme_options_tab" style="display:none;">
+                            <h1>'.__('Yelp settings','wpestate').'</h1>
+                            <input type="submit" name="submit"  class="new_admin_submit new_admin_submit_right" value="'.__('Save Changes','wpestate').'" />
+                            <div class="theme_option_separator"></div>';
+                            estate_yelp_settings();
+                        print '        
+                        </div>
+                        </form>
 
 
      
@@ -2495,6 +2566,22 @@ function wpestate_theme_admin_apperance(){
         <div class="option_row_explain">' . __('Set how many properties to show per page in lists.', 'wpestate') . '</div>    
                 <input type="text" id="prop_no" name="prop_no" value="'.$prop_no.'"> 
         </div>';
+    
+    $guest_dropdown_no                    =   intval   ( get_option('wp_estate_guest_dropdown_no','') );
+    print '<div class= "estate_option_row">
+        <div class="label_option_row">' . __('Maximum Guest number', 'wpestate') . '</div>
+        <div class="option_row_explain">' . __('Set maximum number of guests in guest dropdowns.', 'wpestate') . '</div>    
+                <input type="text" id="guest_dropdown_no" name="guest_dropdown_no" value="'.$guest_dropdown_no.'"> 
+        </div>';
+    
+    
+    $month_no                    =   intval   ( get_option('wp_estate_month_no_show','') );
+    print '<div class= "estate_option_row">
+        <div class="label_option_row">' . __('Maximum Month number', 'wpestate') . '</div>
+        <div class="option_row_explain">' . __('Set maximum number of months to be shown on property page. 12 is the recommended number. A higher number may result in page slowness.', 'wpestate') . '</div>    
+                <input type="text" id="month_no_show" name="month_no_show" value="'.$month_no.'"> 
+        </div>';
+    
         
     $wp_estate_prop_image_number    =   esc_html( get_option('wp_estate_prop_image_number','') );
     print '  <div class="estate_option_row">
@@ -3090,6 +3177,21 @@ endif;
 if( !function_exists('wpestate_export_theme_options') ):
 function wpestate_export_theme_options(){
     $export_options = array(
+        'wp_estate_paralax_header',
+        'wp_estate_spash_header_type',
+        'wp_estate_splash_image',
+        'wp_estate_splash_slider_gallery',
+        'wp_estate_splash_slider_transition',
+        'wp_estate_splash_video_mp4',
+        'wp_estate_splash_video_webm',
+        'wp_estate_splash_video_ogv',
+        'wp_estate_splash_video_cover_img',
+        'wp_estate_splash_overlay_image',
+        'wp_estate_splash_overlay_color',
+        'wp_estate_splash_overlay_opacity',
+        'wp_estate_splash_page_title',
+        'wp_estate_splash_page_subtitle',
+        'wp_estate_splash_page_logo_link',  
         'wp_estate_full_invoice_reminder',       
         'wp_estate_full_invoice_reminder',
         'wp_estate_map_max_pins',
@@ -3149,6 +3251,7 @@ function wpestate_export_theme_options(){
         'wp_estate_footer_background',
         'wp_estate_repeat_footer_back',
         'wp_estate_prop_no',
+        'wp_estate_guest_dropdown_no', 
         'wp_estate_show_empty_city',
         'wp_estate_blog_sidebar',
         'wp_estate_blog_sidebar_name',
@@ -3613,6 +3716,7 @@ function new_wpestate_header_settings(){
             </select>
         </div>';
     
+    
     $header_array_logo  =   array(
                             'type1',
                             'type2'
@@ -3698,6 +3802,17 @@ function new_wpestate_header_settings(){
         <input id="global_header_button" type="button"  class="upload_button button" value="'.__('Upload Header Image','wpestate').'" />
     </div>';
     
+    $cache_array                =   array('yes','no');
+    $paralax_header_select      =   wpestate_dropdowns_theme_admin($cache_array,'paralax_header');
+    
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Parallax efect for image/video header media ? ','wpestate').'</div>
+    <div class="option_row_explain">'.__('Enable parallax efect for image/video media header.','wpestate').'</div>    
+        <select id="paralax_header" name="paralax_header">
+            '.$paralax_header_select.'
+        </select>
+    </div>';
+    
     $use_upload_tax_page_symbol='';
     $use_upload_tax_page_status= esc_html ( get_option('wp_estate_use_upload_tax_page','') );
 
@@ -3781,9 +3896,162 @@ function new_wpestate_footer_settings(){
 }
 endif; // end new_wpestate_footer_settings
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///  Splash Page
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+if( !function_exists('wpestate_splash_page') ):   
+function wpestate_splash_page(){
+    $type_array=array('image','video','image slider');
+    $spash_header_type_symbol =  wpestate_dropdowns_theme_admin($type_array,'spash_header_type');
+   
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__(' Select the splash page type.','wpestate').'</div>
+    <div class="option_row_explain">'.__('Important: Create also a page with template "Splash Page" to see how your splash settings apply ','wpestate').'</div>    
+        <select id="spash_header_type" name="spash_header_type">
+            '.$spash_header_type_symbol.'
+        </select> 
+    </div>';
+    
+   
+    
 
-
+    
+    $splash_image                  =   esc_html( get_option('wp_estate_splash_image','') );
+    print'<div class="estate_option_row splash_image_info">
+        <div class="label_option_row">'.__('Splash Image','wpestate').'</div>
+        <div class="option_row_explain">'.__('Splash Image, .png, .jpg or .gif format','wpestate').'</div>    
+            <input id="splash_image" type="text" size="36" name="splash_image" value="'.$splash_image.'" />
+            <input id="splash_image_button" type="button"  class="upload_button button" value="'.__('Upload Image','wpestate').'" />     
+    </div>';   
+    
+    
+    $splash_slider_gallery                  =   esc_html( get_option('wp_estate_splash_slider_gallery','') );
+    print'<div class="estate_option_row splash_slider_info" id="splash_slider_images">
+        <div class="label_option_row">'.__(' Slider Images','wpestate').'</div>
+        <div class="option_row_explain">'.__('Slider Images, .png, .jpg or .gif format','wpestate').'</div>    
+            <input type="hidden" id="splash_slider_gallery" type="text" size="36" name="splash_slider_gallery" value="'.$splash_slider_gallery.'" />
+            <input id="splash_slider_gallery_button" type="button"  class="upload_button button" value="'.__('Select Images','wpestate').'" /> ';
+    
+    $splash_slider_gallery_array= explode(',', $splash_slider_gallery);
+    
+    print ' <div class="splash_thumb_wrapepr">';
+    if(is_array($splash_slider_gallery_array)){
+        foreach ($splash_slider_gallery_array as $image_id) {
+            if($image_id!=''){
+                $preview            =   wp_get_attachment_image_src($image_id, 'thumbnail');
+                if($preview[0]!=''){
+                    print '<div class="uploaded_thumb" data-imageid="'.$image_id.'">
+                        <img  src="'.$preview[0].'"  alt="slider" />
+                        <span class="splash_attach_delete">x</span>
+                    </div>';
+                }
+            }
+        }
+    }
+    
+    print'            
+      </div>     
+    </div>';   
+    
+    
+    $splash_slider_transition             =  esc_html ( get_option('wp_estate_splash_slider_transition','') );
+    print'<div class="estate_option_row splash_slider_info">
+    <div class="label_option_row">'.__('Slider Transition','wpestate').'</div>
+    <div class="option_row_explain">'.__('Slider Transition Period','wpestate').'</div>    
+        <input type="text" name="splash_slider_transition" value="'.$splash_slider_transition.'"  class="inptxt" />
+    </div>';
+    
+    
+    $splash_video_mp4                  =   esc_html( get_option('wp_estate_splash_video_mp4','') );
+    print'<div class="estate_option_row splash_video_info">
+        <div class="label_option_row">'.__('Splash Video in mp4 format','wpestate').'</div>
+        <div class="option_row_explain">'.__('Splash Video in mp4 format ','wpestate').'</div>    
+            <input id="splash_video_mp4" type="text" size="36" name="splash_video_mp4" value="'.$splash_video_mp4.'" />
+            <input id="splash_video_mp4_button" type="button"  class="upload_button button" value="'.__('Upload Video','wpestate').'" />    
+    </div>';  
+    
+    $splash_video_webm                  =   esc_html( get_option('wp_estate_splash_video_webm','') );
+    print'<div class="estate_option_row splash_video_info">
+        <div class="label_option_row">'.__('Splash Video in webm format','wpestate').'</div>
+        <div class="option_row_explain">'.__('Splash Video in webm format ','wpestate').'</div>    
+            <input id="splash_video_webm" type="text" size="36" name="splash_video_webm" value="'.$splash_video_webm.'" />
+            <input id="splash_video_webm_button" type="button"  class="upload_button button" value="'.__('Upload Video','wpestate').'" />    
+    </div>';  
+    
+    $splash_video_ogv                  =   esc_html( get_option('wp_estate_splash_video_ogv','') );
+    print'<div class="estate_option_row splash_video_info">
+        <div class="label_option_row">'.__('Splash Video in ogv format','wpestate').'</div>
+        <div class="option_row_explain">'.__('Splash Video in ogv format ','wpestate').'</div>    
+            <input id="splash_video_ogv" type="text" size="36" name="splash_video_ogv" value="'.$splash_video_ogv.'" />
+            <input id="splash_video_ogv_button" type="button"  class="upload_button button" value="'.__('Upload Video','wpestate').'" />    
+    </div>';  
+    
+    $splash_video_cover_img                  =   esc_html( get_option('wp_estate_splash_video_cover_img','') );
+    print'<div class="estate_option_row splash_video_info">
+        <div class="label_option_row">'.__('Cover Image for video','wpestate').'</div>
+        <div class="option_row_explain">'.__('Cover Image for video','wpestate').'</div>    
+            <input id="splash_video_cover_img" type="text" size="36" name="splash_video_cover_img" value="'.$splash_video_cover_img.'" />
+            <input id="splash_video_cover_img_button" type="button"  class="upload_button button" value="'.__('Upload Image','wpestate').'" />    
+    </div>';  
+    
+    
+    
+    $splash_overlay_image                  =   esc_html( get_option('wp_estate_splash_overlay_image','') );
+    print'<div class="estate_option_row ">
+        <div class="label_option_row">'.__('Overlay Image','wpestate').'</div>
+        <div class="option_row_explain">'.__('Overlay Image, .png, .jpg or .gif format','wpestate').'</div>    
+            <input id="wp_estate_splash_overlay_image" type="text" size="36" name="splash_overlay_image" value="'.$splash_overlay_image.'" />
+            <input id="wp_estate_splash_overlay_image_button" type="button"  class="upload_button button" value="'.__('Upload Image','wpestate').'" />     
+    </div>';   
+    
+    
+    $splash_overlay_color                     =  esc_html ( get_option('wp_estate_splash_overlay_color','') );
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Overlay Color','wpestate').'</div>
+    <div class="option_row_explain">'.__('Overlay Color','wpestate').'</div>    
+        <input type="text" name="splash_overlay_color" maxlength="7" class="inptxt " value="'.$splash_overlay_color.'"/>
+        <div id="splash_overlay_color" class="colorpickerHolder"><div class="sqcolor" style="background-color:#'.$splash_overlay_color.';"  ></div></div>
+    </div>';  
+  
+    
+    $splash_overlay_opacity             =  esc_html ( get_option('wp_estate_splash_overlay_opacity','') );
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Overlay Opacity','wpestate').'</div>
+    <div class="option_row_explain">'.__('Overlay Opacity- values from 0 to 1 , Ex: 0.4','wpestate').'</div>    
+        <input type="text" name="splash_overlay_opacity" value="'.$splash_overlay_opacity.'"  class="inptxt" />
+    </div>';
+    
+    
+    $splash_page_title            =  stripslashes( esc_html ( get_option('wp_estate_splash_page_title','') ) );
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Splash Page Title','wpestate').'</div>
+    <div class="option_row_explain">'.__('Splash Page Title','wpestate').'</div>    
+        <input type="text" name="splash_page_title" value="'.$splash_page_title.'"  class="inptxt" />
+    </div>';
+    
+    $splash_page_subtitle            =  stripslashes ( esc_html ( get_option('wp_estate_splash_page_subtitle','') ) );
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Splash Page Subtitle','wpestate').'</div>
+    <div class="option_row_explain">'.__('Splash Page Subtitle','wpestate').'</div>    
+        <input type="text" name="splash_page_subtitle" value="'.$splash_page_subtitle .'"  class="inptxt" />
+    </div>';
+    
+   
+    
+    
+    $splash_page_logo_link            =  esc_html ( get_option('wp_estate_splash_page_logo_link','') );
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Logo Link','wpestate').'</div>
+    <div class="option_row_explain">'.__('In case you want to send users to another page','wpestate').'</div>    
+        <input type="text" name="splash_page_logo_link" value="'.$splash_page_logo_link.'"  class="inptxt" />
+    </div>';
+    
+    print ' <div class="estate_option_row_submit">
+    <input type="submit" name="submit"  class="new_admin_submit " value="'.__('Save Changes','wpestate').'" />
+    </div>';
+}
+endif;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///  Social Accounts
@@ -4864,6 +5132,128 @@ function estate_recaptcha_settings(){
 }
 endif; //estate_recaptcha_settings
 //
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///  yelp settings
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+if(!function_exists('estate_yelp_settings')):
+function estate_yelp_settings(){
+    $yelp_terms             =   get_option('wp_estate_yelp_categories','');    
+    $yelp_client_id         =   get_option('wp_estate_yelp_client_id','');
+    $yelp_client_secret     =   get_option('wp_estate_yelp_client_secret','');
+      $yelp_results_no        = get_option('wp_estate_yelp_results_no','');
+    if(!is_array($yelp_terms)){
+        $yelp_terms=array();
+    }
+    
+   
+    
+    $yelp_terms_array = 
+            array (
+                'active'            =>  array( 'category' => __('Active Life','wpestate'),
+                                                'category_sign' => 'fa fa-bicycle'),
+                'arts'              =>  array( 'category' => __('Arts & Entertainment','wpestate'), 
+                                               'category_sign' => 'fa fa-music') ,
+                'auto'              =>  array( 'category' => __('Automotive','wpestate'), 
+                                                'category_sign' => 'fa fa-car' ),
+                'beautysvc'         =>  array( 'category' => __('Beauty & Spas','wpestate'), 
+                                                'category_sign' => 'fa fa-female' ),
+                'education'         => array(  'category' => __('Education','wpestate'),
+                                                'category_sign' => 'fa fa-graduation-cap' ),
+                'eventservices'     => array(  'category' => __('Event Planning & Services','wpestate'), 
+                                                'category_sign' => 'fa fa-birthday-cake' ),
+                'financialservices' => array(  'category' => __('Financial Services','wpestate'), 
+                                                'category_sign' => 'fa fa-money' ),                
+                'food'              => array(  'category' => __('Food','wpestate'), 
+                                                'category_sign' => 'fa fa fa-cutlery' ),
+                'health'            => array(  'category' => __('Health & Medical','wpestate'), 
+                                                'category_sign' => 'fa fa-medkit' ),
+                'homeservices'      => array(  'category' =>__('Home Services ','wpestate'), 
+                                                'category_sign' => 'fa fa-wrench' ),
+                'hotelstravel'      => array(  'category' => __('Hotels & Travel','wpestate'), 
+                                                'category_sign' => 'fa fa-bed' ),
+                'localflavor'       => array(  'category' => __('Local Flavor','wpestate'), 
+                                                'category_sign' => 'fa fa-coffee' ),
+                'localservices'     => array(  'category' => __('Local Services','wpestate'), 
+                                                'category_sign' => 'fa fa-dot-circle-o' ),
+                'massmedia'         => array(  'category' => __('Mass Media','wpestate'),
+                                                'category_sign' => 'fa fa-television' ),
+                'nightlife'         => array(  'category' => __('Nightlife','wpestate'),
+                                                'category_sign' => 'fa fa-glass' ),
+                'pets'              => array(  'category' => __('Pets','wpestate'),
+                                                'category_sign' => 'fa fa-paw' ),
+                'professional'      => array(  'category' => __('Professional Services','wpestate'), 
+                                                'category_sign' => 'fa fa-suitcase' ),
+                'publicservicesgovt'=> array(  'category' => __('Public Services & Government','wpestate'),
+                                                'category_sign' => 'fa fa-university' ),
+                'realestate'        => array(  'category' => __('Real Estate','wpestate'), 
+                                                'category_sign' => 'fa fa-building-o' ),
+                'religiousorgs'     => array(  'category' => __('Religious Organizations','wpestate'), 
+                                                'category_sign' => 'fa fa-cloud' ),
+                'restaurants'       => array(  'category' => __('Restaurants','wpestate'),
+                                                'category_sign' => 'fa fa-cutlery' ),
+                'shopping'          => array(  'category' => __('Shopping','wpestate'),
+                                                'category_sign' => 'fa fa-shopping-bag' ),
+                'transport'         => array(  'category' => __('Transportation','wpestate'),
+                                                'category_sign' => 'fa fa-bus' )
+    );
+    print '<div class="estate_option_row">'.__('Please note that Yelp is not working for all countries. See here ','wpestate').'<a href="https://www.yelp.com/factsheet">https://www.yelp.com/factsheet</a>'.__(' the list of countries where Yelp is available.','wpestate').'</br></div>';
+      
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Yelp Api Fusion Client Id','wpestate').'</div>
+    <div class="option_row_explain">'.__('Get this detail after you signup here ','wpestate').'<a target="_blank" href="https://www.yelp.com/developers/v3/manage_app">https://www.yelp.com/developers/v3/manage_app</a></div>    
+        <input  type="text" id="yelp_client_id" name="yelp_client_id"  value="'.$yelp_client_id.'"/> 
+    </div>';
+    
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Yelp Api Fusion Client Secret','wpestate').'</div>
+    <div class="option_row_explain">'.__('Get this detail after you signup here ','wpestate').'<a target="_blank" href="https://www.yelp.com/developers/v3/manage_app">https://www.yelp.com/developers/v3/manage_app</a></div>    
+        <input  type="text" id="yelp_client_secret" name="yelp_client_secret"  value="'.$yelp_client_secret.'"/> 
+    </div>';
+       
+       
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Yelp Categories ','wpestate').'</div>
+    <div class="option_row_explain">'.__('Yelp Categories to show on front page ','wpestate').'</div>    
+        <select name="yelp_categories[]" style="height:400px;" id="yelp_categories" multiple>';
+        foreach($yelp_terms_array as $key=>$term){
+            print '<option value="'.$key.'" ' ;
+            $keyx = array_search ($key,$yelp_terms) ;
+            if( $keyx!==false ){
+                print 'selected= "selected" ';
+            }
+            print'>'.$term['category'].'</option>';
+        }
+    print'</select>
+    </div>';
+    
+       
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Yelp - no of results','wpestate').'</div>
+    <div class="option_row_explain">'.__('Yelp - no of results ','wpestate').'</div>    
+        <input  type="text" id="yelp_results_no" name="yelp_results_no"  value="'.$yelp_results_no.'"/> 
+    </div>';
+    
+    $cache_array=array('miles','kilometers');
+    $yelp_dist_measure=  wpestate_dropdowns_theme_admin($cache_array,'yelp_dist_measure');
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Yelp Distance Measurement Unit','wpestate').'</div>
+    <div class="option_row_explain">'.__('Yelp Distance Measurement Unit','wpestate').'</div>    
+       <select id="yelp_dist_measure" name="yelp_dist_measure">
+            '.$yelp_dist_measure.'
+        </select> 
+    </div>';
+    
+    
+      print ' <div class="estate_option_row_submit">
+    <input type="submit" name="submit"  class="new_admin_submit " value="'.__('Save Changes','wpestate').'" />
+    </div>';
+     
+     
+    
+}endif;
 
 
 

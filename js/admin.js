@@ -1,4 +1,6 @@
 /*global $, jQuery, ajaxcalls_vars, document, control_vars, window, tb_show, tb_remove*/
+
+
 wpestate_set_theme_tab_visible();
 jQuery(document).ready(function ($) {
     "use strict";
@@ -278,7 +280,10 @@ jQuery(document).ready(function ($) {
 
     //admin color changes
 
-    my_colors = ['main_color',
+    my_colors = ['page_header_overlay_color_video',
+        'page_header_overlay_color',
+        'splash_overlay_color',
+        'main_color',
         'background_color',
         'content_back_color',
         'header_color',
@@ -343,6 +348,39 @@ jQuery(document).ready(function ($) {
         }
         return false;
 	});
+        
+//        page header options 
+        $('#page_header_type').change(function(){
+                var value=$(this).val();
+               
+                wpestate_show_heder_options(value);
+               
+        });
+            
+
+        function wpestate_show_heder_options(value){
+            $('.header_admin_options').hide();
+
+            if (value=='2'){
+                 $('.header_admin_options.image_header').show();
+            }
+            else if (value=='3'){
+                $('.header_admin_options.theme_slider').show();
+            }
+            else if (value=='4'){
+                $('.header_admin_options.revolution_slider').show();
+            }
+            else if (value=='5'){
+                 $('.header_admin_options.google_map').show();
+            } 
+            else if (value=='6'){
+                 $('.header_admin_options.video_header').show();
+            }
+        }
+        
+        $('#page_header_type').trigger('change');
+        //end page header options
+             
 });
 
 function wpestate_set_theme_tab_visible(){
@@ -404,7 +442,7 @@ function    estate_activate_template_action(){
                 
             },
             success: function (data) { 
-                console.log(data);  
+         
                 parent.find('.importing_mess').empty().text(ajax_upload_demo_vars.complete);
             },
             error: function (errorThrown) {

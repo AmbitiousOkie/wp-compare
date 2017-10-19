@@ -178,6 +178,8 @@ function initialize() {
 
     oms.addListener('unspiderfy ', function (markers) {
     });
+    
+    wpestate_initialize_poi(map, 1);
 
 }
 ///////////////////////////////// end initialize

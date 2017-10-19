@@ -1,4 +1,21 @@
 <?php
+
+if( !function_exists('wpestate_dropdowns_theme_admin') ):
+            function wpestate_dropdowns_theme_admin_option($post_id,$array_values,$option_name,$pre=''){
+                $dropdown_return    =   '';
+                $option_value       =   esc_html ( get_post_meta($post_id, $option_name, true) );
+                foreach($array_values as $value){
+                    $dropdown_return.='<option value="'.$value.'"';
+                      if ( $option_value == $value ){
+                        $dropdown_return.='selected="selected"';
+                    }
+                    $dropdown_return.='>'.$pre.$value.'</option>';
+                }
+
+                return $dropdown_return;
+
+            }
+endif;
 add_action('add_meta_boxes', 'estate_sidebar_meta');
 add_action('save_post', 'estate_save_postdata', 1, 2);
 add_action( 'edit_comment', 'extend_comment_edit_metafields' );
@@ -17,9 +34,9 @@ if( !function_exists('estate_sidebar_meta') ):
                 add_meta_box('wpestate-pro_list_adv',       esc_html__( 'Property List Advanced Options','wpestate'), 'estate_prop_advanced_function', 'page', 'normal', 'low');
             }
         }
-        add_meta_box('wpestate-header',             esc_html__( 'Header Options','wpestate'), 'estate_header_function', 'page', 'normal', 'low');
-        add_meta_box('wpestate-header',             esc_html__( 'Header Options','wpestate'), 'estate_header_function', 'post', 'normal', 'low');
-        add_meta_box('wpestate-header',             esc_html__( 'Header Options','wpestate'), 'estate_header_function', 'estate_agent', 'normal', 'low');
+        add_meta_box('wpestate-header',             esc_html__( 'Appearance Options','wpestate'), 'estate_header_function', 'page', 'normal', 'low');
+        add_meta_box('wpestate-header',             esc_html__( 'Appearance Options','wpestate'), 'estate_header_function', 'post', 'normal', 'low');
+        add_meta_box('wpestate-header',             esc_html__( 'Appearance Options','wpestate'), 'estate_header_function', 'estate_agent', 'normal', 'low');
         //add_meta_box('wpestate-header',             esc_html__( 'Header Options','wpestate'), 'estate_header_function', 'estate_property', 'normal', 'low');
         add_meta_box('wpestate-header', esc_html__('Stars'), 'estate_comment_starts', 'comment', 'normal');
     }
@@ -42,7 +59,8 @@ if( !function_exists('estate_header_function') ):
                                 'image',
                                 'theme slider',
                                 'revolution slider',
-                                'google map'
+                                'google map',
+                                'video header'
                                 );
 
         $header_type    =   get_post_meta ( $post->ID, 'header_type', true);
@@ -69,33 +87,25 @@ if( !function_exists('estate_header_function') ):
                 $transparent_symbol.='>'.$value.'</option>';
         }
 
-
-        print '  
-        <table>
-        <tr>
-            <td width="33%" valign="top" align="left">
-                '.esc_html__( 'Select media header type','wpestate').'
-            </td>
-            <td width="33%" valign="top" align="left">
-                <select name="header_type">
-                '.$header_select.'
-                </select>
-            </td>
-        </tr>
-         <tr>
-            <td width="33%" valign="top" align="left">
-                '.esc_html__( 'Transparent Header','wpestate').'
-            </td>
-            <td width="33%" valign="top" align="left">
-                 <select name="transparent_status">
+        
+        print'
+            <h3 class="pblankh">'.__('Use transparent header','wpestate').'</h3>
+            <select name="transparent_status">
                 '.$transparent_symbol.'
-                </select>
-            </td>
-        </tr>
-         </table>';
+            </select>';
+        
+        print '   
+            <h3 class = "pblankh">'.__('Select header type','wpestate').'</h3>
+            <select id = "page_header_type" name = "header_type">
+            '.$header_select.'
+            </select>';
 
-        estate_page_map_box($post);
-        estate_page_slider_box($post);
+
+
+    estate_page_map_box($post);
+    estate_page_slider_box($post);
+    estate_page_video_box($post);
+    estate_page_theme_slider($post);
     }
 endif;
 
@@ -524,13 +534,15 @@ if( !function_exists('estate_page_slider_box') ):
         global $post;
         $rev_slider           = get_post_meta($post->ID, 'rev_slider', true);
         print '  
-        <p class="meta-options pblank">
-            <h3 class="pblankh">'.esc_html__( 'Options for Revolution Slider (if Header Type "revolution slider" is selected)','wpestate').'</h3>
-        </p>
-        <p class="meta-options">	
-            <label for="page_custom_lat">'.esc_html__( 'Revolution Slider Name','wpestate').'</label><br />
-            <input type="text" id="rev_slider" name="rev_slider" size="40" value="'.$rev_slider.'">
-        </p>
+        <div class="header_admin_options revolution_slider">
+            <p class="meta-options pblank">
+                <h3 class="pblankh">'.esc_html__( 'Options for Revolution Slider (if Header Type "revolution slider" is selected)','wpestate').'</h3>
+            </p>
+            <p class="meta-options">	
+                <label for="page_custom_lat">'.esc_html__( 'Revolution Slider Name','wpestate').'</label><br />
+                <input type="text" id="rev_slider" name="rev_slider" size="40" value="'.$rev_slider.'">
+            </p>
+            </div>
         ';
     }
 endif; // end   estate_page_slider_box  
@@ -563,29 +575,30 @@ function estate_page_map_box($post) {
     if ($page_custom_zoom==''){
         $page_custom_zoom=15;
     }
-    print ' <p class="meta-options pblank">
+    print ' <div class="header_admin_options google_map">
+        <p class="meta-options pblank">
         <h3 class="pblankh">'.esc_html__( 'Options for Google Maps (if Header Type "google map" is selected)','wpestate').'</h3>
         </p>';
     
     if( get_post_type($post->ID)!="estate_property" ){
         print '
        
-        <p class="meta-options">
+        <p class="meta-options pblank">
         '.esc_html__( '  Leave these blank in order to get the general map settings.','wpestate').'
         </p>
-        <p class="meta-options">	
+        <p class="meta-options third-meta-options">	
         <label for="page_custom_lat">'.esc_html__( 'Map - Center point  Latitudine: ','wpestate').'</label><br />
-        <input type="text" id="page_custom_lat" name="page_custom_lat" size="40" value="'.$page_lat.'">
+        <input type="text" id="page_custom_lat" name="page_custom_lat" size="36" value="'.$page_lat.'">
         </p>
 
-        <p class="meta-options">	
+        <p class="meta-options third-meta-options">	
         <label for="page_custom_long">'.esc_html__( 'Map - Center point  Longitudine: ','wpestate').'</label><br />
-        <input type="text" id="page_custom_long" name="page_custom_long" size="40" value="'.$page_long.'">
+        <input type="text" id="page_custom_long" name="page_custom_long" size="36" value="'.$page_long.'">
         </p>
 
 
 
-        <p class="meta-options">
+        <p class="meta-options third-meta-options">
         <label for="page_custom_zoom">'.esc_html__( 'Zoom Level for map (1-20)','wpestate').'</label><br />
         <select name="page_custom_zoom" id="page_custom_zoom">';
 
@@ -602,23 +615,23 @@ function estate_page_map_box($post) {
     }
  
     print'
-    <p class="meta-options">
+    <p class="meta-options third-meta-options">
      <label for="min_height">'.esc_html__( 'Height of the map when closed','wpestate').'</label><br />
       <input id="min_height" type="text" size="36" name="min_height" value="'.$min_height.'" />
-    <p>
+    </p>
 
-     <p class="meta-options">
+    <p class="meta-options third-meta-options">
        <label for="max_height">'.esc_html__( 'Height of map when open','wpestate').'</label><br />
        <input id="max_height" type="text" size="36" name="max_height" value="'.$max_height.'" />
-    <p>
+    </p>
 
-    <p class="meta-options">
+    <p class="meta-options third-meta-options">
        <label for="keep_min">'.esc_html__( 'Force map at the "closed" size ? ','wpestate').'</label><br />
        <select id="keep_min" name="keep_min">
        <option value=""></option>
           '.$keep_min_symbol.'
        </select>           
-    <p>
+    </p> 
     
 
     <p class="meta-options">
@@ -629,9 +642,23 @@ function estate_page_map_box($post) {
             print ' checked="checked" ';
         }
     print '/>
-    </p>
-        
+     </p></div>';
+   
+    
 
+    
+    $cache_array        =   array('yes','no');
+    $cache_array_rev    =   array('no','yes');
+    $cache_array_fix    =   array('cover','contain');
+    $img_full_screen                    = wpestate_dropdowns_theme_admin_option($post->ID,$cache_array_rev,'page_header_image_full_screen');
+    $img_full_back_type                 = wpestate_dropdowns_theme_admin_option($post->ID,$cache_array_fix,'page_header_image_back_type');   
+    $page_header_title_over_image       = stripslashes ( esc_html ( get_post_meta($post->ID, 'page_header_title_over_image', true) ) );
+    $page_header_subtitle_over_image    = stripslashes ( esc_html ( get_post_meta($post->ID, 'page_header_subtitle_over_image', true) ) );
+    $page_header_image_height           = esc_html ( get_post_meta($post->ID, 'page_header_image_height', true) );
+    $page_header_overlay_val            = esc_html ( get_post_meta($post->ID, 'page_header_overlay_val', true) );
+    $page_header_overlay_color          = esc_html ( get_post_meta($post->ID, 'page_header_overlay_color', true) );
+    
+print'<div class="header_admin_options image_header">
     <p class="meta-options pblank">
     <h3 class="pblankh">'.esc_html__( 'Options for Static Image  (if Header Type "image" is selected)','wpestate').'</h3>
     </p>
@@ -641,10 +668,172 @@ function estate_page_map_box($post) {
         <input id="page_custom_image" type="text" size="36" name="page_custom_image" value="'.$page_custom_image.'" />
 	<input id="page_custom_image_button" type="button"   size="40" class="upload_button button" value="'.esc_html__( 'Upload Image','wpestate').'" />
     </p>
-    <p class="meta-options pblank">
-    </p>';
+    
+    <p class="meta-options third-meta-options">
+        <label for="page_header_image_full_screen">'.__('Full Screen?','wpestate').'</label><br />
+        <select id="page_header_image_full_screen" name="page_header_image_full_screen">
+            '.$img_full_screen.'
+        </select>
+    </p>
+        
+    <p class="meta-options third-meta-options">
+        <label for="page_header_image_back_type">'.__('Full Screen Background Type?','wpestate').'</label><br />
+        <select id="page_header_image_back_type" name="page_header_image_back_type">
+            '.$img_full_back_type.'
+        </select>
+    </p>
+        
+    <p class="meta-options third-meta-options">
+        <label for="page_header_title_over_image">'.__('Title Over Image','wpestate').'</label><br />
+        <input id="page_header_title_over_image" type="text" size="36" name="page_header_title_over_image" value="'.$page_header_title_over_image.'" />
+    </p>
+        
+    <p class="meta-options third-meta-options">
+        <label for="page_header_subtitle_over_image">'.__('SubTitle Over Image','wpestate').'</label><br />
+        <input id="page_header_subtitle_over_image" type="text" size="36" name="page_header_subtitle_over_image" value="'.$page_header_subtitle_over_image.'" />
+    </p>
+
+    <p class="meta-options third-meta-options">
+        <label for="page_header_image_height">'.__('Image Height(Ex:700, Default:580px)','wpestate').'</label><br />
+        <input id="page_header_image_height" type="text" size="36" name="page_header_image_height" value="'.$page_header_image_height.'" />
+    </p>    
+
+        <div class="meta-options third-meta-options">
+            <label for="page_header_overlay_color">'.__('Overlay Color','wpestate').'</label><br />
+            <div id="page_header_overlay_color" class="colorpickerHolder"><div class="sqcolor" style="background-color:#'.$page_header_overlay_color.';"  ></div></div>  <input type="text" name="page_header_overlay_color" maxlength="7" class="inptxt " value="'.$page_header_overlay_color.'"/>
+        </div>
+
+        <p class="meta-options third-meta-options">
+            <label for="page_header_overlay_val">'.__('Overlay Opacity(betwen 0 and 1 , Ex:0.5, default 0.6)','wpestate').'</label><br />
+            <input id="page_header_overlay_val" type="text" size="36" name="page_header_overlay_val" value="'.$page_header_overlay_val.'" />
+        </p>
+
+
+        <p class="meta-options pblank">
+        </p></div>';
 }
 endif; // end   estate_page_map_box 
+
+
+
+if( !function_exists('estate_page_video_box') ):
+function estate_page_video_box($post) {
+    global $post;
+    //page_custom_video
+
+    
+    $cache_array                        =   array('yes','no');
+    $cache_array_reverse                =   array('no','yes');
+    $cache_array_fix                    =   array('screen','auto');
+    $page_custom_video                  =   get_post_meta($post->ID, 'page_custom_video', true);
+    $page_custom_video_webbm            =   get_post_meta($post->ID, 'page_custom_video_webbm', true);
+    $page_custom_video_ogv              =   get_post_meta($post->ID, 'page_custom_video_ogv', true);
+    $page_custom_video_cover_image      =   get_post_meta($post->ID, 'page_custom_video_cover_image', true);
+    $img_full_screen                    =   wpestate_dropdowns_theme_admin_option($post->ID,$cache_array_reverse,'page_header_video_full_screen');
+    $page_header_title_over_video       =   stripslashes ( esc_html ( get_post_meta($post->ID, 'page_header_title_over_video', true) ) );
+    $page_header_subtitle_over_video    =   stripslashes ( esc_html ( get_post_meta($post->ID, 'page_header_subtitle_over_video', true) ) );
+    $page_header_video_height           =   esc_html ( get_post_meta($post->ID, 'page_header_video_height', true) );
+    $page_header_overlay_color_video    =   esc_html ( get_post_meta($post->ID, 'page_header_overlay_color_video', true) );
+    $page_header_overlay_val_video      =   esc_html ( get_post_meta($post->ID, 'page_header_overlay_val_video', true) );
+    
+    print ' 
+    <div class="header_admin_options video_header">
+        <p class="meta-options pblank">
+            <h3 class="pblankh">'.__('Options for Video Header','wpestate').'</h3>
+        </p>
+      
+ 
+   
+        <p class="meta-options ">
+            <label for="page_custom_image">'.__('Video MP4 version','wpestate').'</label><br />
+            <input id="page_custom_video" type="text" size="36" name="page_custom_video" value="'.$page_custom_video.'" />
+            <input id="page_custom_video_button" type="button"   size="40" class="upload_button button" value="'.__('Upload Video','wpestate').'" />
+        </p>
+        
+        <p class="meta-options ">
+            <label for="page_custom_image">'.__('Video WEBM version','wpestate').'</label><br />
+            <input id="page_custom_video_webbm" type="text" size="36" name="page_custom_video_webbm" value="'.$page_custom_video_webbm.'" />
+            <input id="page_custom_video_webbm_button" type="button"   size="40" class="upload_button button" value="'.__('Upload Video','wpestate').'" />
+        </p>
+        
+        <p class="meta-options ">
+            <label for="page_custom_image">'.__('Video OGV version','wpestate').'</label><br />
+            <input id="page_custom_video_ogv" type="text" size="36" name="page_custom_video_ogv" value="'.$page_custom_video_ogv.'" />
+            <input id="page_custom_video_ogv_button" type="button"   size="40" class="upload_button button" value="'.__('Upload Video','wpestate').'" />
+        </p>
+        
+        <p class="meta-options ">
+            <label for="page_custom_video_cover_image">'.__('Cover Image','wpestate').'</label><br />
+            <input id="page_custom_video_cover_image" type="text" size="36" name="page_custom_video_cover_image" value="'.$page_custom_video_cover_image.'" />
+            <input id="page_custom_video_cover_image_button" type="button"   size="40" class="upload_button button" value="'.__('Upload Image','wpestate').'" />
+        </p>
+        
+        <p class="meta-options third-meta-options">
+            <label for="page_header_video_full_screen">'.__('Full Screen?','wpestate').'</label><br />
+            <select id="page_header_video_full_screen" name="page_header_video_full_screen">
+                '.$img_full_screen.'
+            </select>
+        </p>
+        
+       
+        
+        <p class="meta-options third-meta-options">
+            <label for="page_header_title_over_video">'.__('Title Over Image','wpestate').'</label><br />
+            <input id="page_header_title_over_video" type="text" size="36" name="page_header_title_over_video" value="'.$page_header_title_over_video.'" />
+        </p>
+        
+        <p class="meta-options third-meta-options">
+            <label for="page_header_subtitle_over_video">'.__('SubTitle Over Image','wpestate').'</label><br />
+            <input id="page_header_subtitle_over_video" type="text" size="36" name="page_header_subtitle_over_video" value="'.$page_header_subtitle_over_video.'" />
+        </p>
+
+        <p class="meta-options third-meta-options">
+            <label for="page_header_video_height">'.__('Video Height(Ex:700, Default:580px)','wpestate').'</label><br />
+            <input id="page_header_video_height" type="text" size="36" name="page_header_video_height" value="'.$page_header_video_height.'" />
+        </p>    
+
+        <div class="meta-options third-meta-options">
+            <label for="page_header_overlay_color_video">'.__('Overlay Color','wpestate').'</label><br />
+          
+            <div id="page_header_overlay_color_video" class="colorpickerHolder"><div class="sqcolor" style="background-color:#'.$page_header_overlay_color_video.';"  ></div></div>  <input type="text" name="page_header_overlay_color_video" maxlength="7" class="inptxt " value="'.$page_header_overlay_color_video.'"/>
+        </div>
+
+        <p class="meta-options third-meta-options">
+            <label for="page_header_overlay_val_video">'.__('Overlay Opacity(betwen 0 and 1 , Ex:0.5, default 0.6)','wpestate').'</label><br />
+            <input id="page_header_overlay_val_video" type="text" size="36" name="page_header_overlay_val_video" value="'.$page_header_overlay_val_video.'" />
+        </p>
+
+
+        <p class="meta-options pblank">
+        </p></div>';
+   
+}
+endif; // end   estate_page_slider_box  
+
+
+
+if( !function_exists('estate_page_theme_slider') ):
+function estate_page_theme_slider($post) {
+    global $post;
+    $rev_slider           = get_post_meta($post->ID, 'rev_slider', true);
+    print ' 
+    <div class="header_admin_options theme_slider">
+        <p class="meta-options pblank">
+            <h3 class="pblankh">'.__('Options for Theme Slider','wpestate').'</h3>
+        </p>
+        <p class="meta-options">	
+           
+        </p>
+    </div>
+    ';
+}
+endif; // end   estate_page_slider_box  
+
+
+
+
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -852,6 +1041,23 @@ function estate_save_postdata($post_id) {
 
      
     $allowed_keys=array(
+        'page_header_image_back_type',
+        'page_header_image_full_screen',
+        'page_header_overlay_val_video',
+        'page_header_overlay_color_video',
+        'page_header_video_height',
+        'page_header_subtitle_over_video',
+        'page_header_title_over_video',
+        'page_header_video_full_screen',
+        'page_custom_video_cover_image',
+        'page_custom_video_ogv',
+        'page_custom_video_webbm',
+        'page_custom_video',
+        'page_header_overlay_val',
+        'page_header_overlay_color',
+        'page_header_image_height',
+        'page_header_subtitle_over_image',
+        'page_header_title_over_image',
         'biling_period',
         'sidebar_option',
         'sidebar_select',

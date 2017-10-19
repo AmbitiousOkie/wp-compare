@@ -99,6 +99,7 @@ function estate_facebook_login($get_vars){
         wp_redirect( esc_url(home_url() ) ); exit(); 
     }else{
         wpestate_update_old_users($user_signon->ID);
+        wpestate_calculate_new_mess();
         wp_redirect(wpestate_get_dashboard_profile_link());exit();
     }
                
@@ -251,6 +252,7 @@ if( !function_exists('estate_google_oauth_login') ):
                 wp_redirect( esc_url(home_url()) );  exit();
             }else{
                 wpestate_update_old_users($user_signon->ID);
+                wpestate_calculate_new_mess();
                 wp_redirect($dashboard_url);exit();
             }
           
@@ -308,6 +310,7 @@ function estate_open_id_login($get_vars){
             wp_redirect( esc_url( home_url() ) );  exit();
         }else{
             wpestate_update_old_users($user_signon->ID);
+            wpestate_calculate_new_mess();
             wp_redirect($dashboard_url);exit();
         }
            

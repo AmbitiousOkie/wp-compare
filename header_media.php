@@ -15,6 +15,9 @@ $global_header_type         =   get_option('wp_estate_header_type','');
 if(is_singular('estate_agent')){
     $global_header_type         =   get_option('wp_estate_user_header_type','');
 }
+if( is_page_template( 'splash_page.php' ) ){
+    get_template_part( 'templates/adv_search_mobile');
+}
 
 
 if(!is_404()){
@@ -160,10 +163,33 @@ if($show_adv_search_general ==  'yes' && !is_404() ){
 }
 
 ?>   
+    
+     <?php 
+        if(is_page_template( 'splash_page.php' ) ){
+            print '<div class="splash_page_widgets_wrapper">';
+            
+            print ' <div class="splash-left-widet">
+                <ul class="xoxo">';
+                    dynamic_sidebar('splash-page_bottom-left-widget-area');
+                print'</ul>    
+            </div> '; 
+
+            print'
+            <div class="splash-right-widet">
+                <ul class="xoxo">';
+                   dynamic_sidebar('splash-page_bottom-right-widget-area');
+                print'</ul>
+            </div>';
+            
+            print '</div>';
+        }
+    
+    ?>
+    
 </div>
 
 <?php 
-if( $show_mobile == 1 ){
+if( $show_mobile==1 && !is_page_template( 'splash_page.php' ) ){
     get_template_part('templates/adv_search_mobile');
 }
 ?>

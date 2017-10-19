@@ -375,11 +375,7 @@ if( !function_exists('wpestate_show_custom_details') ):
                         } 
 
                 }
-/*
-   print 'xxxx '.$from_date->format('Y-m-d').' / '.$tomorrrow_date.' - > '.$checker;
-   print '%%%%'.  $data_day['period_extra_price_per_guest'].'/'.$flag_guest.'%%%%%';
-  print    '</br>flag '.$flag.' --- '. $flag_price .' --- '.$flag_min_days .'---'.$flag_guest.'</br>';   
-*/
+
                 if (  $checker == 0 ){
                     // we have consecutive days, data stays the sa,e- do not print 
                 } else{

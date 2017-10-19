@@ -15,7 +15,8 @@ var mcluster;
 var clusterStyles;
 var infoBox;
 var infobox_width;
-
+var poi_marker_array=[];
+var poi_type='';
 
 
 
@@ -135,9 +136,6 @@ function wpestate_fit_bounds(bounds){
 }
 
 
-
-
-
  function wpestate_classic_form_tax_visible($onpin,$onreq){
     $onpin = $onpin.toLowerCase();
     $onpin = decodeURI($onpin);
@@ -164,7 +162,7 @@ function wpestate_fit_bounds(bounds){
 
 function setMarkers(map, locations) {
     "use strict";
-    var  beach, id, lat, lng, title, pin, counter, image, price, single_first_type, single_first_action, link, city, area, cleanprice, rooms, baths, size, single_first_type_name, single_first_action_name, map_open, myLatLng, selected_id, open_height, boxText, closed_height, width_browser, infobox_width, vertical_pan, myOptions,status, i, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8;
+    var  pin_price,beach, id, lat, lng, title, pin, counter, image, price, single_first_type, single_first_action, link, city, area, cleanprice, rooms, baths, size, single_first_type_name, single_first_action_name, map_open, myLatLng, selected_id, open_height, boxText, closed_height, width_browser, infobox_width, vertical_pan, myOptions,status, i, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8;
     selected_id = parseInt(jQuery('#gmap_wrapper').attr('data-post_id'), 10);
     if (isNaN(selected_id)) {
         selected_id = parseInt(jQuery('#google_map_on_list').attr('data-post_id'), 10);
@@ -204,6 +202,7 @@ function setMarkers(map, locations) {
     infoBox = new InfoBox(myOptions);
 
     for (i = 0; i < locations.length; i++) {
+        
         beach                       = locations[i];
         id                          = beach[10];
         lat                         = beach[1];
@@ -225,35 +224,39 @@ function setMarkers(map, locations) {
         single_first_type_name      = decodeURIComponent(beach[17]);
         single_first_action_name    = decodeURIComponent(beach[18]);
         status                      = decodeURIComponent(beach[19]);
+        pin_price                   =   decodeURIComponent ( beach[20] );
+      
+    
 
         if (mapfunctions_vars.custom_search === 'yes') {
-            slug1 = beach[19];
-            val1 = beach[20];
-            how1 = beach[21];
-            slug2 = beach[22];
-            val2 = beach[23];
-            how2 = beach[24];
-            slug3 = beach[25];
-            val3 = beach[26];
-            how3 = beach[27];
-            slug4 = beach[28];
-            val4 = beach[29];
-            how4 = beach[30];
-            slug5 = beach[31];
-            val5 = beach[32];
-            how5 = beach[33];
-            slug6 = beach[34];
-            val6 = beach[35];
-            how6 = beach[36];
-            slug7 = beach[37];
-            val7 = beach[38];
-            how7 = beach[39];
-            slug8 = beach[40];
-            val8 = beach[41];
-            how8 = beach[42];
+            i=1;
+            slug1 = beach[19+i];
+            val1 = beach[20+i];
+            how1 = beach[21+i];
+            slug2 = beach[22+i];
+            val2 = beach[23+i];
+            how2 = beach[24+i];
+            slug3 = beach[25+i];
+            val3 = beach[26+i];
+            how3 = beach[27+i];
+            slug4 = beach[28+i];
+            val4 = beach[29+i];
+            how4 = beach[30+i];
+            slug5 = beach[31+i];
+            val5 = beach[32+i];
+            how5 = beach[33+i];
+            slug6 = beach[34+i];
+            val6 = beach[35+i];
+            how6 = beach[36+i];
+            slug7 = beach[37+i];
+            val7 = beach[38+i];
+            how7 = beach[39+i];
+            slug8 = beach[40+i];
+            val8 = beach[41+i];
+            how8 = beach[42+i];
         }
 
-        createMarker(infobox_width ,size, i, id, lat, lng, pin, title, counter, image, price, single_first_type, single_first_action, link, city, area, rooms, baths, cleanprice, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8, single_first_type_name, single_first_action_name,status);
+        createMarker(pin_price,infobox_width ,size, i, id, lat, lng, pin, title, counter, image, price, single_first_type, single_first_action, link, city, area, rooms, baths, cleanprice, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8, single_first_type_name, single_first_action_name,status);
         // found the property
 
         if (selected_id === id) {
@@ -287,89 +290,122 @@ function setMarkers(map, locations) {
 //  create marker
 /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-function createMarker(infobox_width, size, i, id, lat, lng, pin, title, counter, image, price, single_first_type, single_first_action, link, city, area, rooms, baths, cleanprice, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8, single_first_type_name, single_first_action_name,status) {
+function createMarker(pin_price,infobox_width, size, i, id, lat, lng, pin, title, counter, image, price, single_first_type, single_first_action, link, city, area, rooms, baths, cleanprice, slug1, val1, how1, slug2, val2, how2, slug3, val3, how3, slug4, val4, how4, slug5, val5, how5, slug6, val6, how6, slug7, val7, how7, slug8, val8, how8, single_first_type_name, single_first_action_name,status) {
     "use strict";
     var marker, myLatLng;
-
+    var Titlex = jQuery('<textarea />').html(title).text();
+    var infobox_class="";
+    var poss=0;
     myLatLng = new google.maps.LatLng(lat, lng);
-    if (mapfunctions_vars.custom_search === 'yes') {
-        marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            icon: custompin(pin),
-            custompin: pin,
-            shape: shape,
-            title: decodeURIComponent(title.replace(/\+/g, ' ')),
-            zIndex: counter,
-            image: image,
-            idul: id,
-            price: price,
-            category: single_first_type,
-            action: single_first_action,
-            link: link,
-            city: city,
-            area: area,
-            infoWindowIndex: i,
-            rooms: rooms,
-            guest_no: baths,
-            size: size,
-            cleanprice: cleanprice,
-            category_name: single_first_type_name,
-            action_name: single_first_action_name,
-            slug1: slug1,
-            val1: val1,
-            howto1: how1,
-            slug2: slug2,
-            val2: val2,
-            howto2: how2,
-            slug3: slug3,
-            val3: val3,
-            howto3: how3,
-            slug4: slug4,
-            val4: val4,
-            howto4: how4,
-            slug5: slug5,
-            val5: val5,
-            howto5: how5,
-            slug6: slug6,
-            val6: val6,
-            howto6: how7,
-            slug7: slug7,
-            val7: val7,
-            howto7: how7,
-            slug8: slug8,
-            val8: val8,
-            howto8: how8,
-         
-        });
+    if(mapfunctions_vars.useprice === 'yes'){
+        infobox_class=" pin_price_info "
+        var myLatlng = new google.maps.LatLng(lat,lng);
+        marker= new WpstateMarker( 
+            area,
+            city,     
+            pin_price,
+            poss,
+            myLatlng, 
+            map, 
+            Titlex,
+            counter,
+            image,
+            id,
+            price,
+            single_first_type,
+            single_first_action,
+            link,
+            i,
+            rooms,
+            baths,
+            cleanprice,
+            size,
+            single_first_type_name,
+            single_first_action_name,
+            pin,
+        
+        );
+          
+    }else{
+        infobox_class=" classic_info "
+        if (mapfunctions_vars.custom_search === 'yes') {
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                icon: custompin(pin),
+                custompin: pin,
+                shape: shape,
+                title: decodeURIComponent(title.replace(/\+/g, ' ')),
+                zIndex: counter,
+                image: image,
+                idul: id,
+                price: price,
+                category: single_first_type,
+                action: single_first_action,
+                link: link,
+                city: city,
+                area: area,
+                infoWindowIndex: i,
+                rooms: rooms,
+                guest_no: baths,
+                size: size,
+                cleanprice: cleanprice,
+                category_name: single_first_type_name,
+                action_name: single_first_action_name,
+                slug1: slug1,
+                val1: val1,
+                howto1: how1,
+                slug2: slug2,
+                val2: val2,
+                howto2: how2,
+                slug3: slug3,
+                val3: val3,
+                howto3: how3,
+                slug4: slug4,
+                val4: val4,
+                howto4: how4,
+                slug5: slug5,
+                val5: val5,
+                howto5: how5,
+                slug6: slug6,
+                val6: val6,
+                howto6: how7,
+                slug7: slug7,
+                val7: val7,
+                howto7: how7,
+                slug8: slug8,
+                val8: val8,
+                howto8: how8,
 
-    } else {
-        marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            icon: custompin(pin),
-            custompin: pin,
-            shape: shape,
-            title: title,
-            zIndex: counter,
-            image: image,
-            idul: id,
-            price: price,
-            category: single_first_type,
-            action: single_first_action,
-            link: link,
-            city: city,
-            area: area,
-            infoWindowIndex: i,
-            rooms: rooms,
-            guest_no: baths,
-            cleanprice: cleanprice,
-            size: size,
-            category_name: single_first_type_name,
-            action_name: single_first_action_name,
-            status:status
-        });
+            });
 
+        }else {
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                icon: custompin(pin),
+                custompin: pin,
+                shape: shape,
+                title: title,
+                zIndex: counter,
+                image: image,
+                idul: id,
+                price: price,
+                category: single_first_type,
+                action: single_first_action,
+                link: link,
+                city: city,
+                area: area,
+                infoWindowIndex: i,
+                rooms: rooms,
+                guest_no: baths,
+                cleanprice: cleanprice,
+                size: size,
+                category_name: single_first_type_name,
+                action_name: single_first_action_name,
+                status:status
+            });
+        }
     }
 
     gmarkers.push(marker);
@@ -440,7 +476,7 @@ function createMarker(infobox_width, size, i, id, lat, lng, pin, title, counter,
         if (this.title.length > 22) {
             title = title + "...";
         }
-        infoBox.setContent('<div class="info_details"><span id="infocloser" onClick=\'javascript:infoBox.close();\' ></span>'+status_html+'<a href="' + this.link + '"><div class="infogradient"></div><div class="infoimage" style="background-image:url(' + info_image + ')"  ></div></a><a href="' + this.link + '" id="infobox_title">' + title + '</a><div class="prop_detailsx">' + category_name + " " + in_type + " " + action_name + '</div><div class="infodetails">' + infoguest + inforooms + '</div><div class="prop_pricex">' + this.price + '</div></div>');
+        infoBox.setContent('<div class="info_details '+infobox_class+' "><span id="infocloser" onClick=\'javascript:infoBox.close();\' ></span>'+status_html+'<a href="' + this.link + '"><div class="infogradient"></div><div class="infoimage" style="background-image:url(' + info_image + ')"  ></div></a><a href="' + this.link + '" id="infobox_title">' + title + '</a><div class="prop_detailsx">' + category_name + " " + in_type + " " + action_name + '</div><div class="infodetails">' + infoguest + inforooms + '</div><div class="prop_pricex">' + this.price + '</div></div>');
 
         infoBox.open(map, this);
       
@@ -600,7 +636,6 @@ function map_cluster() {
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// zoom
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -630,8 +665,6 @@ if (document.getElementById('gmapzoomminus')) {
         map.setZoom(current);
     });
 }
-
-
 
 
 jQuery('#gmapstreet').click(function () {
@@ -754,7 +787,6 @@ function showMyPosition(pos) {
 }
 
 
-
 function custompinchild() {
     "use strict";
     var custom_img, image;
@@ -808,7 +840,6 @@ function custompinchild() {
 }
 
 
-
 // same thing as above but with ipad double click workaroud solutin
 jQuery('#googleMap,#google_map_prop_list_wrapper').click(function (event) {
     "use strict";
@@ -838,6 +869,7 @@ jQuery('#googleMap,#google_map_prop_list_wrapper').click(function (event) {
     }
 });
 
+
 jQuery('#google_map_on_list').click(function (event) {
     if (Modernizr.mq('only all and (max-width: 1025px)')) {
         if (map.draggable === false) {
@@ -847,12 +879,6 @@ jQuery('#google_map_on_list').click(function (event) {
         }
     }
 });
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// 
@@ -873,7 +899,6 @@ if (document.getElementById('search_map_button')) {
         infoBox.close();
     });
 }
-
 
 
 if (document.getElementById('advanced_search_map_button')) {
@@ -935,9 +960,6 @@ jQuery('.advanced_action_div li').click(function () {
     "use strict";
     var action = jQuery(this).val();
 });
-
-
-
 
 
 if (document.getElementById('gmap-menu')) {
@@ -1064,7 +1086,6 @@ function get_custom_value(slug) {
 
     return value;
 }
-
 
 
 function show_pins() {
@@ -1231,6 +1252,7 @@ function custompinhover() {
     return image;
 }
 
+
 function custompin2(image) {
     "use strict";
     image = {
@@ -1333,7 +1355,6 @@ Label.prototype.draw = function () {
 };
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /// close advanced search
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1410,23 +1431,37 @@ function wpestate_set_filter_pins_ondemand(map, new_markers) {
     });
 }
 
-
+var marker_zindex;
 function wpestate_hover_action_pin(listing_id) {
     "use strict";
+    
     for (var i = 0; i < gmarkers.length; i++) {
         if (parseInt(gmarkers[i].idul, 10) === parseInt(listing_id, 10)) {
-            gmarkers[i].setIcon(custompinhover());
+            google.maps.event.trigger(gmarkers[i], 'click');
+            if(mapfunctions_vars.useprice !== 'yes'){
+                gmarkers[i].setIcon(custompinhover());
+            }
+            marker_zindex=gmarkers[i].getZIndex();
+            gmarkers[i].setZIndex(9999999);
+            console.log("z index "+gmarkers[i].getZIndex());
         }
     }
+
 }
 
 function wpestate_return_hover_action_pin(listing_id) {
     "use strict";
+
     for (var i = 0; i < gmarkers.length; i++) {
         if (parseInt(gmarkers[i].idul, 10) === parseInt(listing_id, 10)) {
+            infoBox.close()
+                if(mapfunctions_vars.useprice !== 'yes'){
             gmarkers[i].setIcon(custompin(gmarkers[i].custompin));
+                }
+            gmarkers[i].setZIndex(marker_zindex);
         }
     }
+
 }
 
 String.prototype.capitalize = function () {
@@ -1434,3 +1469,147 @@ String.prototype.capitalize = function () {
         return a.toUpperCase();
     });
 };
+
+////////////////////////////////////////////////////////////////
+//map places
+///////////////////////////////////////////////////////////////
+
+var wpestate_initialize_poi = function ( map_for_poi,what){
+    var poi_service         =   new google.maps.places.PlacesService( map_for_poi );
+    var already_serviced    =   ''
+    var show_poi            =   '';
+    var map_bounds          =   map_for_poi.getBounds();
+    var selector            =   '.google_poi';
+    if(what==2){
+        selector = '.google_poish';
+    }
+
+    
+
+    jQuery(selector).click(function(event){
+        event.stopPropagation();
+        poi_type        =   jQuery(this).attr('id');
+        var position    =   map_for_poi.getCenter();
+        var show_poi    =   wpestate_return_poi_values(poi_type);
+
+
+        if( jQuery(this).hasClass('poi_active')){
+            wpestate_show_hide_poi(poi_type,'hide');
+        }else{
+    
+            already_serviced = wpestate_show_hide_poi(poi_type,'show');
+            if(already_serviced===1){ 
+               
+                var request = {
+                    location:   position,
+                    types:      show_poi,        
+                    bounds:     map_bounds,
+                    radius:     2500,
+                };
+                poi_service.nearbySearch( request,function (results, status){
+                    wpestate_googlemap_display_poi(results, status,map_for_poi)
+                });
+            }
+        }
+        jQuery(this).toggleClass('poi_active');
+    });
+ 
+    
+   
+    
+    
+    // return google poi types for selected poi
+    var wpestate_return_poi_values = function (poi_type){
+        var  show_poi;
+        switch(poi_type) {
+                case 'transport':
+                    show_poi = ['bus_station', 'airport', 'train_station', 'subway_station'];
+                    break;
+                case 'supermarkets':
+                    show_poi = ['grocery_or_supermarket', 'shopping_mall'];
+                    break;
+                case 'schools':
+                    show_poi = ['school', 'university'];
+                    break;
+                case 'restaurant':
+                    show_poi=['restaurant'];
+                    break
+                case 'pharma':
+                    show_poi = ['pharmacy'];
+                    break;
+                case 'hospitals':
+                    show_poi = ['hospital'];
+                    break;
+            }
+        return show_poi;
+    }
+
+    
+    // add poi markers on the map
+    var wpestate_googlemap_display_poi = function (results, status,map_for_poi) {
+        var place, poi_marker;
+        if ( google.maps.places.PlacesServiceStatus.OK == status  ) {
+            for (var i = 0; i < results.length; i++) {
+                poi_marker  =   wpestate_create_poi_marker(results[i],map_for_poi);
+                poi_marker_array.push(poi_marker);
+            }
+        }
+    }
+
+    // create the poi markers
+    var wpestate_create_poi_marker = function (place,map_for_poi){
+        marker = new google.maps.Marker({
+            map: map_for_poi,
+            position: place.geometry.location,
+            show_poi:poi_type,
+            icon: mapfunctions_vars.path+'/poi/'+poi_type+'.png'
+        });
+
+
+        var boxText         =   document.createElement("div");
+        var infobox_poi     =   new InfoBox({
+                    content: boxText,
+                    boxClass:"estate_poi_box",
+                    pixelOffset: new google.maps.Size(-30, -70),
+                    zIndex: null,
+                    maxWidth: 275,
+                    closeBoxMargin: "-13px 0px 0px 0px",
+                    closeBoxURL: "",
+                    infoBoxClearance: new google.maps.Size(1, 1),
+                    pane: "floatPane",
+                    enableEventPropagation: false
+                });
+
+        google.maps.event.addListener(marker, 'mouseover', function(event) {
+            infobox_poi.setContent(place.name);
+            infobox_poi.open(map, this);
+        });
+
+        google.maps.event.addListener(marker, 'mouseout', function(event) {
+            if( infobox_poi!== null){
+                infobox_poi.close(); 
+            }
+        });
+        return marker;
+    }
+
+
+    
+    // hide-show poi
+    var wpestate_show_hide_poi = function (poi_type,showhide){
+        var is_hiding=1;
+
+        for (var i = 0; i < poi_marker_array.length; i++) {
+            if (poi_marker_array[i].show_poi === poi_type){
+                if(showhide==='hide'){
+                    poi_marker_array[i].setVisible(false);
+                }else{
+                    poi_marker_array[i].setVisible(true);
+                    is_hiding=0;
+                }
+            }
+        }
+
+        return is_hiding;
+    }
+}

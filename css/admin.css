@@ -200,6 +200,10 @@
     float: left
 }
 
+.cur_explanations {
+    margin: 10px 0px;
+}
+
 .metacustom{
     float:left;
     width:33%;
@@ -211,6 +215,7 @@
     width:135px;
     margin-right:20px;
 }
+
 .field_item input {
     width: 125px!important;
     min-width: 125px!important;
@@ -306,6 +311,20 @@
 
 .pblankh{
     padding-left:0px!important;
+    font-size: 15px;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 15px;
+}
+
+.meta-box-sortables select {
+    max-width: 250px;
+    width: 100%;
+}
+
+.third-meta-options {
+    width: 33%;
+    display: inline-block;
+    box-sizing: border-box;
 }
 
 
@@ -1268,11 +1287,58 @@ textarea, input, select {
    padding: 20px 20px 20px 230px;
 }
 
+
+#splash_slider_images{
+    display: inline-block;
+    padding-left: 30px;
+    
+}
+
+.splash_image_info,
+.splash_slider_info,
+.splash_video_info{
+    display:none;
+}
+
+#splash_slider_images.splash_slider_info{
+    display:none;
+}
+
+.splash_attach_delete{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: #a51e6c;
+    color: #fff;
+    font-size: 20px;
+    padding: 5px;
+    cursor: pointer;
+}
+
 .header_explanation {
     font-size: 12px;
     display: block;
     padding: 0px 0px 0px 230px;
 }
+
+#page_custom_video_cover_image_button,
+#page_custom_video_ogv_button,
+#page_custom_video_webbm_button,
+#page_custom_video_button{
+    box-shadow: none !important;
+    border-radius: 6px;
+    background-clip: padding-box;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    border-color: #d9d9d9;
+    vertical-align: middle;
+    height: 40px;
+    padding: 7px 9px;
+    min-width: 300px;
+    -webkit-appearance: none;
+    border: 1px solid #d9d9d9;
+}
+
 
 .estate_option_row_submit{
     padding: 20px 20px 20px 230px;
@@ -1439,6 +1505,13 @@ textarea, input, select {
     display: block;
     margin: auto;
     margin-bottom: 5px;
+}
+
+.uploaded_thumb {
+    float: left;
+    display: inline;
+    margin: 10px 20px 10px 0px;
+    position: relative;
 }
 
 #wpestate_sidebar_menu{
@@ -1832,4 +1905,14 @@ textarea, input, select {
 .payment_management_rentals_wrapper{
     margin-left: 220px;
     
+}
+
+#estate_invoice-sectionid #print_invoice{
+    display:none;
+}
+
+.invoice_explantions{
+    width:100%;
+    float:left;
+    margin: 5px 0px;
 }

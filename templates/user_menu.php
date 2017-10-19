@@ -116,6 +116,11 @@ if($user_custom_picture==''){
 <div id="user_tab_menu_trigger"><i class="fa fa-user"></i> <?php esc_html_e('User Menu','wpestate'); ?></div>
 
 <div class="user_tab_menu col-md-3" id="user_tab_menu_container">
+    <?php
+        if ( wp_is_mobile() ) {
+            print'<div class="user_tab_menu_close"><i class="fa fa-times"></i></div>';
+        }
+    ?>
     
     <div class="profile-image-wrapper">
         <div id="profile-image-menu"  
@@ -218,8 +223,9 @@ if($user_custom_picture==''){
             <a href="<?php print $dash_my_reservations;?>" class="<?php print $activemyreservations; ?>"><i class="fa fa-folder-open"></i> <?php esc_html_e('My Reservations','wpestate');?></a>
         <?php } ?>   
             
-        <?php if( $dash_inbox!=$home_url ){ ?>
-            <a href="<?php print $dash_inbox;?>" class="<?php print $activeinbox; ?>"><i class="fa fa-inbox"></i> <?php esc_html_e('My Inbox','wpestate');?></a>
+        <?php if( $dash_inbox!=$home_url ){ 
+            $no_unread=  intval(get_user_meta($userID,'unread_mess',true));?>
+            <a href="<?php print $dash_inbox;?>" class="<?php print $activeinbox; ?>"><div class="unread_mess_wrap_menu"><?php echo $no_unread;?></div><i class="fa fa-inbox"></i> <?php esc_html_e('My Inbox','wpestate');?></a>
         <?php } ?>
             
         <?php if( $dash_invoice!=$home_url && wpestate_check_user_level()  ){ ?>

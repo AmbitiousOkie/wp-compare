@@ -28,6 +28,7 @@
      
         if ( 0 != $current_user->ID  && is_user_logged_in() ) {
             $username               =   $current_user->user_login ;
+            $userID                 =   $current_user->ID;
             $add_link               =   wpestate_get_dasboard_add_listing();
             $dash_profile           =   wpestate_get_dashboard_profile_link();
             $dash_favorite          =   wpestate_get_dashboard_favorites();
@@ -39,7 +40,7 @@
             $dash_invoices          =   get_invoices_wpestate();
             $logout_url             =   wp_logout_url();      
             $home_url               =   esc_html( home_url() );
-
+            $no_unread=  intval(get_user_meta($userID,'unread_mess',true));
             ?> 
             <ul class="user_mobile_menu_list">
                 <li><a href="<?php print $dash_profile;?>" ><i class="fa fa-cog"></i><?php esc_html_e('My Profile','wpestate');?></a></li>   
@@ -56,7 +57,7 @@
                     <li><a href="<?php print $dash_bookings;?>" class="active_fav"><i class="fa fa-folder-open-o"></i><?php esc_html_e('Bookings','wpestate');?></a></li>
                 <?php } ?>
                 
-                <li><a href="<?php print $dash_inbox;?>" class="active_fav"><i class="fa fa-inbox"></i><?php esc_html_e('Inbox','wpestate');?></a></li>
+                <li><a href="<?php print $dash_inbox;?>" class="active_fav"><div class="unread_mess_wrap_menu"><?php echo $no_unread;?></div><i class="fa fa-inbox"></i><?php esc_html_e('Inbox','wpestate');?></a></li>
                 
                 <?php if( wpestate_check_user_level() ) { ?>
                     <li><a href="<?php print $dash_invoices;?>" class="active_fav"><i class="fa fa-file-o"></i><?php esc_html_e('Invoices','wpestate');?></a></li>

@@ -71,7 +71,7 @@ $options                        =   wpestate_page_details($post->ID);
                     $enable_stripe_status   =   esc_html ( get_option('wp_estate_enable_stripe','') );
                     $enable_direct_pay      =   esc_html ( get_option('wp_estate_enable_direct_pay','') );
                      
-                    print '<div class="col-md-8">';
+                    print '<div class="col-md-8 payments_buttons_wrapper pay_disabled">';
                     if($enable_paypal_status==='yes'){
                         print '<div id="pick_pack">'.esc_html__( 'Pay with Paypal','wpestate').'</div>';
                     }

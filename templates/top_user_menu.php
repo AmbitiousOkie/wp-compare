@@ -40,6 +40,7 @@ if( $user_small_picture_id == '' ){
 
 if ( 0 != $current_user->ID  && is_user_logged_in() ) {
     $username               =   $current_user->user_login ;
+    $userID                 =   $current_user->ID;
     $add_link               =   wpestate_get_dasboard_add_listing();
     $dash_profile           =   wpestate_get_dashboard_profile_link();
     $dash_favorite          =   wpestate_get_dashboard_favorites();
@@ -91,8 +92,9 @@ if ( 0 != $current_user->ID  && is_user_logged_in() ) {
             <a href="<?php print $dash_bookings;?>" class="active_fav"><i class="fa fa-folder-open-o"></i><?php esc_html_e('Bookings','wpestate');?></a>
         <?php   
         }
-        if($home_url!=$dash_inbox){?>
-            <a href="<?php print $dash_inbox;?>" class="active_fav"><i class="fa fa-inbox"></i><?php esc_html_e('Inbox','wpestate');?></a>
+        if($home_url!=$dash_inbox){
+             $no_unread=  intval(get_user_meta($userID,'unread_mess',true));?>
+            <a href="<?php print $dash_inbox;?>" class="active_fav"><div class="unread_mess_wrap_menu"><?php echo $no_unread;?></div><i class="fa fa-inbox"></i><?php esc_html_e('Inbox','wpestate');?></a>
         <?php   
          }
         if($home_url!=$dash_invoices && wpestate_check_user_level() ){?>

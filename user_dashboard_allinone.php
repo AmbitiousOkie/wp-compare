@@ -204,8 +204,10 @@ function wpestate_get_calendar_allinone ($initial = true, $echo = true) {
     $unixmonth = mktime(0, 0 , 0, $thismonth, 1, $thisyear);
     $last_day = date('t', $unixmonth);
 
-    $month_no=1;
-        while ($month_no<12){
+    $month_no       =   1;
+    $max_month_no   =   intval   ( get_option('wp_estate_month_no_show','') );
+
+        while ($month_no<$max_month_no){
          
             wpestate_draw_month_allinone($month_no, $unixmonth, $daywithpost,$thismonth,$thisyear,$last_day);
             $date->modify( 'first day of next month' );

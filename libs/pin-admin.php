@@ -56,6 +56,29 @@ function wpestate_show_pins(){
    print '<p class="admin-exp">'.__('If you add images directly into the input fields (without Upload button) please use the full image path. For ex: http://www.wprentals..... . If you use the "upload"  button use also "Insert into Post" button from the pop up window.','wpestate').'</p>';
    print '<p class="admin-exp">'.__('Pins retina version must be uploaded at the same time (same folder) as the original pin and the name of the retina file should be with_2x at the end.  ','wpestate').'<a href="http://help.wprentals.org/2016/08/01/retina-pins/" target="_blank">'.esc_html__('Help here','wpestate').'</a>'.'</p>';
 
+   
+   $cache_array=array('no','yes');
+    $use_price_pins                 =   wpestate_dropdowns_theme_admin($cache_array,'use_price_pins');
+    
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Use price Pins ?','wpestate').'</div>
+    <div class="option_row_explain">'.__('Use price Pins ?(The css class for price pins is "wpestate_marker" . Each pin has also receive a class with the name of the category or action: For example "wpestate_marker apartments sales")','wpestate').'</div>    
+        <select id="use_price_pins" name="use_price_pins">
+            '.$use_price_pins.'
+        </select>
+    </div>';
+    
+    
+    $use_price_pins_full_price                 =   wpestate_dropdowns_theme_admin($cache_array,'use_price_pins_full_price ');
+    print'<div class="estate_option_row">
+    <div class="label_option_row">'.__('Use Full Price Pins ?','wpestate').'</div>
+    <div class="option_row_explain">'.__('If not we will show prices without before and after label and in this format : 5,23m or 6.83k ','wpestate').'</div>    
+        <select id="use_price_pins_full_price" name="use_price_pins_full_price">
+            '.$use_price_pins_full_price.'
+        </select>
+    </div>';
+   
+   
 
     foreach ($tax_terms as $tax_term) { 
             $limit54   =  $post_name  =   sanitize_key(wpestate_limit54($tax_term->slug));

@@ -44,6 +44,7 @@ print'
 background-color:transparent!important;
 }
 
+.img_listings_overlay:hover,
 #agent_submit_contact,
 .panel-title-arrow,
 .owner_area_wrapper_sidebar,
@@ -540,7 +541,7 @@ if ($menu_font_color != '') {
 
 
 if ($menu_hover_font_color != '') {
-    print '.filter_menu li:hover,#access .sub-menu li:hover>a, #access .sub-menu li:hover>a:active, #access .sub-menu li:hover>a:focus {color: #'.$menu_hover_font_color.';}';
+    print '.filter_menu li:hover,#access .sub-menu li:hover>a, #access .sub-menu li:hover>a:active, #access .sub-menu li:hover>a:focus,#access ul ul li.wpestate_megamenu_col_1 .megamenu-title:hover a, #access ul ul li.wpestate_megamenu_col_2 .megamenu-title:hover a, #access ul ul li.wpestate_megamenu_col_3 .megamenu-title:hover a, #access ul ul li.wpestate_megamenu_col_4 .megamenu-title:hover a, #access ul ul li.wpestate_megamenu_col_5 .megamenu-title:hover a, #access ul ul li.wpestate_megamenu_col_6 .megamenu-title:hover a,#access .with-megamenu  .sub-menu li:hover>a, #access .with-megamenu  .sub-menu li:hover>a:active, #access .with-megamenu  .sub-menu li:hover>a:focus {color: #'.$menu_hover_font_color.';}';
 } // end $menu_hover_font_color
 
 if($top_bar_back!=''){
@@ -670,7 +671,7 @@ $sticky_menu_font_color                =  esc_html ( get_option('wp_estate_stick
 
 $menu_items_color               =   esc_html(get_option('wp_estate_menu_items_color', '') );
     if ($menu_items_color   != '') {
-    print '#access ul ul a{
+    print '#access ul ul a,#access ul ul li.wpestate_megamenu_col_1 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_2 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_3 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_4 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_5 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_6 a.menu-item-link{
             color: #' . $menu_items_color  . ';
         }';
     }
@@ -694,7 +695,7 @@ $menu_items_color               =   esc_html(get_option('wp_estate_menu_items_co
     
     $wp_estate_menu_item_font_size     = get_option('wp_estate_menu_item_font_size','');
     if ($wp_estate_menu_item_font_size   != '') {
-        print '#access ul ul a {
+        print '#access ul ul a,#access ul ul li.wpestate_megamenu_col_1 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_2 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_3 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_4 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_5 a.menu-item-link, #access ul ul li.wpestate_megamenu_col_6 a.menu-item-link {
                  font-size:' . $wp_estate_menu_item_font_size . 'px;
             }';
         }
@@ -832,7 +833,8 @@ $menu_items_color               =   esc_html(get_option('wp_estate_menu_items_co
             }
 
 
-
+            #access ul li.with-megamenu>ul.sub-menu, 
+            #access ul li.with-megamenu:hover>ul.sub-menu,
             .header_wrapper.header_type1.header_align_right #user_menu_open, 
             .header_wrapper.header_type2.header_align_right #user_menu_open,
             .header_wrapper.header_type1.header_align_center #user_menu_open, 
@@ -880,6 +882,12 @@ $menu_items_color               =   esc_html(get_option('wp_estate_menu_items_co
                 top:' . ($sticky_header_height) . 'px;
             }
             
+            .header_type2.customnav.header_left.customnav #access ul li:hover> ul, 
+            .header_type2.customnav.header_center.customnav #access ul li:hover> ul, 
+            .header_type2.customnav.header_right.customnav #access ul li:hover> ul, 
+            .customnav #access ul li.with-megamenu:hover>ul.sub-menu, 
+            .full_width_header .header_type1.header_left.customnav #access ul li.with-megamenu>ul.sub-menu, 
+            .full_width_header .header_type1.header_left.customnav #access ul li.with-megamenu:hover>ul.sub-menu,
             .header_wrapper.customnav.header_type1.header_align_right #user_menu_open, 
             .header_wrapper.customnav.header_type2.header_align_right #user_menu_open,
             .header_wrapper.customnav.header_type1.header_align_center #user_menu_open, 
@@ -903,6 +911,7 @@ $menu_items_color               =   esc_html(get_option('wp_estate_menu_items_co
             .hover_type_6 .header_type2.customnav #access ul li:hover > ul{
                 top:' . ( $sticky_header_height-21) . 'px;
             }
+          
             .hover_type_3 .customnav #access ul li:hover > ul,
             .hover_type_5 .customnav #access ul li:hover > ul,
             .hover_type_6 .customnav #access ul li:hover > ul{

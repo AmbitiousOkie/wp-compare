@@ -139,6 +139,7 @@
     }
 }
 
+
 @media only screen and (max-width: 1240px) and (min-width: 991px){    
     .booking-calendar-set .booking-calendar-wrapper-in {
         width: 685px;
@@ -365,6 +366,9 @@
 
 /*top menu break and transform*/
 @media only screen and (max-width:1180px){
+    .user_tab_menu {
+    top: 70px;
+}
     
     .admin-bar.top_bar_on #google_map_prop_list_sidebar.half_header_type2, 
     .admin-bar.top_bar_on #google_map_prop_list_wrapper.half_header_type2,
@@ -571,9 +575,14 @@
 }
 
 @media only screen and (max-width: 1024px){
-      .listingsidebar {
+    .parallax_effect_yes {
+        background-attachment: initial;
+    }
+    
+    .listingsidebar {
         margin-top: 0px!important;
     }
+    
     #submit_booking_front_instant_wrap:after {
         content: "\f0e7";
         font-family: FontAwesome;
@@ -835,9 +844,11 @@
         width:100%!important;
     }
     
-    #user_tab_menu_trigger{
-        display:block;
+    #user_tab_menu_trigger {
+        display: block;
         padding-left: 0px;
+        float: left;
+        width: 100%;
     }
     
     .user_tab_menu{
@@ -1222,15 +1233,15 @@
         top:21px;
     }
     
-    .listing_type_1 .listing_main_image_price{
+/*    .listing_type_1 .listing_main_image_price{
         max-width: 100%;
         width: auto;
         margin: 0px 15px 15px 15px;
     }
+*/
     .listing_type_1 .booking_form_request{
         max-width: 100%;
         width: auto;
-        margin: 0px 15px 30px 15px;
     }
     .search_dashborad_header {
         padding-left: 10px;
@@ -1268,7 +1279,7 @@
 @media only screen and (max-width: 930px){
    
     .entry-prop{
-        bottom:55px;
+        bottom: 70px;
     }
     
     .listing_main_image .property_ratings{
@@ -1348,6 +1359,59 @@
 
 
 @media only screen and (max-width: 768px){
+    
+    .page-template-splash_page #adv-search-mobile {
+        padding: 13px;
+        z-index: 999;
+        position: absolute;
+        width: 100%;
+    }
+    .page-template-splash_page #adv-search-header-mobile {
+        display: block;
+        z-index: 999;
+        float: left;
+        position: relative;
+    }
+    .page-template-splash_page .container {
+        position: absolute;
+        margin-bottom: 0px;
+    }
+    
+    .page-template-splash_page .content_wrapper {
+        padding: 0px;
+    }
+    
+    
+    .booking_form_stripe,
+    #stripe_form,
+    .stripe-button-el,         
+    #confirm_zero_instant_booking, 
+    #send_direct_bill_booking, 
+    #direct_pay_booking, 
+    #send_direct_bill, 
+    #direct_pay, 
+    #stripe_cancel, 
+    #paypal_booking, 
+    #pick_pack{
+        width: 100%;
+    }
+    
+    #direct_pay_booking,
+    #send_direct_bill_booking,
+    #send_direct_bill, 
+    #direct_pay {
+        margin: 5px 0px 0px 0px;
+    }
+    
+    #google_map_prop_list_sidebar .pagination {
+        text-align: left;
+        margin-left: 30px;
+    }
+    
+    #change_pass,
+    #update_profile {
+        margin-left: 0px;
+    }
     
     #google_map_prop_list_sidebar,
     #google_map_prop_list_wrapper {
@@ -1540,6 +1604,34 @@
 
 
 @media only screen and (max-width: 667px){
+    
+    .wpestate_header_image,
+    .wpestate_header_video{
+        height: 300px!important;
+    }
+
+    .splash_page_widget{
+        width: 100%;
+    }
+    
+    .splash-right-widet {
+        float: none;
+        width: auto;
+        display: inline-block;
+    }
+    
+    .page-template-splash_page .heading_over_video_wrapper, 
+    .page-template-splash_page .heading_over_image_wrapper {
+        top: 22%;
+    }
+    
+    .splash_page_widgets_wrapper {
+        width: 100%;
+        padding: 0px 13px;
+        margin: 0px auto;
+        text-align: center;
+    }
+    
     .import_ical, .export_ical {
         width: 100%;
         max-width: 600px;
@@ -1671,6 +1763,8 @@
     .pagination{
         text-align: center;
     }
+    
+   
     .pagination > li{
         display:inline-block;
         float:none;
@@ -1838,7 +1932,11 @@
         width: 100%;
         text-align: center;
     }
-
+    
+    .top_bar .widget-container .textwidget{
+        float:left;
+    }
+    
     .top_bar  .widget-container {
         margin-bottom: 30px;
         float: left;
@@ -1902,7 +2000,8 @@
     #gmap-next,
     #gmap-prev,
     #gmapzoomminus,
-    #gmapzoomplus{
+    #gmapzoomplus,
+    .single-estate_property #gmapstreet{
         float: left;
         margin-right: 2px;
         margin-top:2px;
@@ -1928,12 +2027,12 @@
         max-width: 300px;
         padding: 0px 7px 0px 7px;
     }
+    
     #property_icalendar_import {
         width: 100%;
         max-width: 300px;
         padding: 0px 7px;
     }
-    
     
     .property_page_container {
         background-color: transparent;
@@ -1966,6 +2065,7 @@
         bottom:auto;
         top:15px;    
     }
+    
     .theme-slider-view{
         padding: 7px 30px!important;
         margin-bottom: 10px;
@@ -1977,11 +2077,10 @@
         width: 100%;
         display: inline-block;
         margin-left: 0px;
-      }
-    
-    
+    }
+      
     .entry-prop {
-        bottom: 85px;
+        bottom: 75px;
         font-size: 25px;
     }
     
@@ -2124,6 +2223,11 @@
         width: 100%!important;
         display: inline-block;
         border:none!important;
+    }
+    
+    .single-estate_property .booking_form_request {
+        margin-right: 10px;
+        width: auto;
     }
     
     .booking_form_request{

@@ -1076,9 +1076,9 @@ if( !function_exists('wpestate_ajax_add_booking_instant') ):
        // $booking_array      =   wpestate_booking_price($booking_guests,$invoice_id,$property_id, $booking_from_date, $booking_to_date);
      
 
-        if($booking_array['numberDays']>7 && $booking_array['numberDays']< 30){
+        if($booking_array['numberDays']>=7 && $booking_array['numberDays']< 30){
             $default_price=$booking_array['week_price'];
-        }else if($booking_array['numberDays']>30){
+        }else if($booking_array['numberDays']>=30){
             $default_price=$booking_array['month_price'];
         }
        
@@ -1090,11 +1090,9 @@ if( !function_exists('wpestate_ajax_add_booking_instant') ):
         $include_expeses    = esc_html ( get_option('wp_estate_include_expenses','') );
       
         if($include_expeses=='yes'){
-            $total_price_comp   =   $invoice_price;  
-        
+            $total_price_comp   =   $invoice_price;       
         }else{
             $total_price_comp   =   $invoice_price - $booking_array['city_fee'] - $booking_array['cleaning_fee'];  
-        
         }
        
         

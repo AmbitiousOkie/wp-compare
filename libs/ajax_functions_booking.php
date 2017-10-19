@@ -393,11 +393,11 @@ if( !function_exists('wpestate_message_reply') ):
         update_post_meta($post_id, 'delete_source', 0);
         update_post_meta($post_id, 'delete_destination', 0);
         update_post_meta($post_id, 'message_to_user', $receiver_id);
-
+    
        // print $messid. '/  receiver_id'.$receiver_id.' / ';
         $mes_to =  get_post_meta($messid, 'message_to_user',true );
         $mess_from= get_post_meta($messid, 'message_from_user',true );
-              
+               wpestate_increment_mess_mo($mes_to);   
         update_post_meta($messid, 'message_status'.$mes_to, 'unread' );
         update_post_meta($messid, 'message_status'.$mess_from, 'unread' );
         update_post_meta($messid, 'message_status'.$userID, 'read' );
@@ -451,19 +451,20 @@ if( !function_exists('wpestate_booking_mark_as_read') ):
             exit('out pls');
         }
     
-        $messid         =   intval($_POST['messid']);
-        $receiver_id    =   wpsestate_get_author($messid);
-        $message_to_user    = get_post_meta($messid,'message_to_user',true);
+        $messid             =   intval($_POST['messid']);
+        $receiver_id        =   wpsestate_get_author($messid);
+        $message_to_user    =   get_post_meta($messid,'message_to_user',true);
       
-       
-   
         if( $current_user->ID != $message_to_user && $current_user->ID != $receiver_id ) {
             exit('you don\'t have the right');
         }
 
-        
-    
-        update_post_meta($messid, 'message_status'.$current_user->ID, 'read');
+        $mess_status =      get_post_meta($messid, 'message_status'.$current_user->ID, true);
+        if($mess_status!=='read'){
+            update_post_meta($messid, 'message_status'.$current_user->ID, 'read');
+            $unread=abs(intval ( get_user_meta($current_user->ID,'unread_mess',true) - 1));
+            update_user_meta($current_user->ID,'unread_mess',$unread);
+        }
         die();
     }
 endif;
@@ -500,6 +501,14 @@ if( !function_exists('wpestate_booking_delete_mess') ):
         }
 
         update_post_meta($messid, 'delete_destination'.$userID, 1);
+        
+        $mess_status =      get_post_meta($messid, 'message_status'.$current_user->ID, true);
+        if($mess_status!=='read'){
+            $unread=abs(intval ( get_user_meta($current_user->ID,'unread_mess',true) - 1));
+            update_user_meta($current_user->ID,'unread_mess',$unread);
+        }
+        
+        
         die();
     }
 endif;
@@ -553,7 +562,7 @@ if( !function_exists('wpestate_create_pay_user_invoice_form') ):
         $property_id            =   esc_html(get_post_meta($bookid, 'booking_id', true));
         $booking_to_date        =   esc_html(get_post_meta($bookid, 'booking_to_date', true)); 
         $booking_guests         =   floatval(get_post_meta($bookid, 'booking_guests', true));
-        $booking_array          =   wpestate_booking_price($booking_guests,$invoice_id,$property_id, $booking_from_date, $booking_to_date);
+        $booking_array          =   wpestate_booking_price($booking_guests,$invoice_id,$property_id, $booking_from_date, $booking_to_date,$bookid);
         $price_per_weekeend     =   floatval(get_post_meta($property_id, 'price_per_weekeend', true));
        
      
@@ -628,9 +637,16 @@ if( !function_exists('wpestate_create_pay_user_invoice_form') ):
 
         print '              
             <div class="create_invoice_form">
-                   <h3>'.esc_html__( 'Invoice INV','wpestate').$invoice_id.'</h3>
-
-                   <div class="invoice_table">
+                   <h3>'.esc_html__( 'Invoice INV','wpestate').$invoice_id.'</h3>';
+  
+              
+                print '
+                   <div class="invoice_table">';
+                    if($invoice_id!=0){
+                        print '<div id="print_invoice" data-invoice_id="'.$invoice_id.'" ><i class="fa fa-print" aria-hidden="true" ></i></div>';
+                    } 
+                
+                        print'
                        <div class="invoice_data">
                             <span class="date_interval"><span class="invoice_data_legend">'.esc_html__( 'Period','wpestate').' : </span>'.$booking_from_date.' '.esc_html__( 'to','wpestate').' '.$booking_to_date.'</span>
                             <span class="date_duration"><span class="invoice_data_legend">'.esc_html__( 'No of nights','wpestate').': </span>'.$booking_array['numberDays'].'</span>
@@ -756,7 +772,7 @@ if( !function_exists('wpestate_create_pay_user_invoice_form') ):
                         if( $balance>0 ){
                             $depozit_stripe =   $balance*100;
                             $depozit        =   $balance;
-                            print '<div class="invoice_pay_status_note">'.__('You are paying the remaining balace of your invoice:','wpestate').' '.$balance_show.'</div><input type="hidden" id="is_full_pay" value="'.$balance.'">';
+                            print '<div class="invoice_pay_status_note">'.__('You are paying the remaining balance of your invoice:','wpestate').' '.$balance_show.'</div><input type="hidden" id="is_full_pay" value="'.$balance.'">';
                         }
                     }
                     
@@ -928,6 +944,17 @@ if( !function_exists('wpestate_delete_booking_request') ):
         rcapi_edit_booking($bookid,$rcapi_booking_id,$booking_details);
 
 
+          
+        $reservation_array      =   wpestate_get_booking_dates($lisiting_id);
+        
+        foreach($reservation_array as $key=>$value){
+            if ($value == $bookid){
+               unset($reservation_array[$key]);
+            }
+        }
+        
+        update_post_meta($lisiting_id, 'booking_dates', $reservation_array); 
+  
         
         wp_delete_post($bookid);
        
@@ -2095,6 +2122,7 @@ if( !function_exists('wpestate_add_to_inbox') ):
         update_post_meta($post_id, 'mess_status', 'new' );
         update_post_meta($post_id, 'message_from_user', $from );
         update_post_meta($post_id, 'message_to_user', $to );   
+        wpestate_increment_mess_mo($to);
         update_post_meta($post_id, 'delete_destination'.$from,0  );
         update_post_meta($post_id, 'delete_destination'.$to, 0 );     
         update_post_meta($post_id, 'message_status', 'unread');
@@ -2277,7 +2305,7 @@ if( !function_exists('wpestate_ajax_show_booking_costs') ):
         }
         $booking_array = wpestate_booking_price($guest_no,$invoice_id, $property_id, $booking_from_date, $booking_to_date,$property_id);
    
-       // print_r($booking_array);
+        //print_r($booking_array);
         $deposit_show       =   '';
         $balance_show       =   '';
         $currency           =   esc_html( get_option('wp_estate_currency_label_main', '') ); //currency_symbol
@@ -2347,7 +2375,7 @@ if( !function_exists('wpestate_ajax_show_booking_costs') ):
           
                 <div class="cost_row">
                     <div class="cost_explanation">'.esc_html__( 'Cleaning Fee','wpestate').'</div>
-                    <div class="cost_value">'.$cleaning_fee_show.'</div>
+                    <div class="cost_value cleaning_fee_value" data_cleaning_fee="'.$booking_array['cleaning_fee'].'">'.$cleaning_fee_show.'</div>
                 </div>';
         }
 
@@ -2356,7 +2384,7 @@ if( !function_exists('wpestate_ajax_show_booking_costs') ):
            
                 <div class="cost_row">
                     <div class="cost_explanation">'.esc_html__( 'City Fee','wpestate').'</div>
-                    <div class="cost_value">'.$city_fee_show.'</div>
+                    <div class="cost_value city_fee_value" data_city_fee="'.$booking_array['city_fee'].'">'.$city_fee_show.'</div>
                 </div>';
         }
 
@@ -2391,6 +2419,7 @@ if( !function_exists('wpestate_ajax_show_booking_costs') ):
       //  print_r($booking_array);
              
         if($instant_booking==1){   
+      
             print '<div class="cost_row_instant instant_depozit">'.esc_html__( 'Deposit for instant booking','wpestate').': ';
             print '<span class="instant_depozit_value">';
                 if(floatval($booking_array['deposit'])!=0){

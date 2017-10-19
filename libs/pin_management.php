@@ -151,6 +151,12 @@ function wpestate_single_listing_pins($prop_id){
             //// get price
             $clean_price    =   intval   ( get_post_meta($the_id, 'property_price', true) );
             $price          =   wpestate_show_price($the_id,$currency,$where_currency,1);
+            $pin_price      =   '';
+            if( get_option('wp_estate_use_price_pins_full_price','')=='no'){
+                $pin_price  =   wpestate_price_pin_converter($clean_price,$where_currency,$currency);
+
+            }
+                
             $rooms          =   get_post_meta($the_id, 'property_bedrooms', true);
             $guest_no       =   get_post_meta($the_id, 'guest_no', true);  
             $size           =   get_post_meta($the_id, 'property_size', true);  		
@@ -188,6 +194,7 @@ function wpestate_single_listing_pins($prop_id){
             $property_status    = esc_html(get_post_meta($the_id, 'property_status', true) ) ;
             $property_status    = apply_filters( 'wpml_translate_single_string', $property_status, 'wpestate', 'property_status_'.$property_status );
             $place_markers[]    = rawurlencode( stripslashes ( $property_status ) );//19
+            $place_markers[]    = $pin_price;
 
 
             $markers[]=$place_markers;
@@ -501,9 +508,15 @@ function wpestate_pin_unit_creation($the_id,$currency,$where_currency,$counter){
 
     //// get price
     $price          =   intval   ( get_post_meta($the_id, 'property_price', true) );
+    $pin_price='';
+    if( get_option('wp_estate_use_price_pins_full_price','')=='no'){
+        $pin_price  =   wpestate_price_pin_converter($price,$where_currency,$currency);
+     }
     $price_label    =   esc_html ( get_post_meta($the_id, 'property_label', true) );
     $clean_price    =   intval   ( get_post_meta($the_id, 'property_price', true) );
     $price          =   wpestate_show_price($the_id,$currency,$where_currency,1);
+    
+    
                     
     $rooms      =   get_post_meta($the_id, 'property_bedrooms', true);
      $guest_no  =   get_post_meta($the_id, 'guest_no', true);  
@@ -542,12 +555,14 @@ function wpestate_pin_unit_creation($the_id,$currency,$where_currency,$counter){
     $place_markers[]    = $size;//16
     $place_markers[]    = rawurlencode ( $single_first_type_name );//17
     $place_markers[]    = rawurlencode ( $single_first_action_name );//18
+  
     
     
     $property_status    = stripslashes ( esc_html(get_post_meta($the_id, 'property_status', true) ) );
     $property_status    = apply_filters( 'wpml_translate_single_string', $property_status, 'wpestate', 'property_status_'.$property_status );
     
     $place_markers[]    = rawurlencode( $property_status );//19
+    $place_markers[]    =   $pin_price;//20
     return  $place_markers;
 }
 endif;

@@ -169,6 +169,7 @@ class Wpestate_Login_widget extends WP_Widget {
                 $dash_inbox             =   get_inbox_wpestate_booking();
                 $dash_invoices          =   get_invoices_wpestate();
                 $home_url               =   esc_html( home_url() );
+                $no_unread=  intval(get_user_meta($userID,'unread_mess',true));
                 $logged_display='
                     <h3 class="widget-title-sidebar" >'.esc_html__( 'Hello ','wpestate'). ' '. $user_login .'  </h3>
                     
@@ -195,7 +196,7 @@ class Wpestate_Login_widget extends WP_Widget {
                     }
                     
                     if($home_url!=$dash_inbox){
-                        $logged_display.=' <li> <a href="'.$dash_inbox.'" class="'.$activefav.'"><i class="fa fa-inbox"></i>'.esc_html__( 'Inbox','wpestate').'</a> </li>';
+                        $logged_display.=' <li> <a href="'.$dash_inbox.'" class="'.$activefav.'"><i class="fa fa-inbox"></i>'.esc_html__( 'Inbox','wpestate').'<div class="unread_mess_wrap_menu">'. $no_unread.'</div></a> </li>';
                     }
                     
                     if($home_url!=$dash_favorite){

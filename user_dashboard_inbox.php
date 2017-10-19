@@ -24,7 +24,7 @@ $options=wpestate_page_details($post->ID);
 ?> 
   
 <div class="row is_dashboard">
-    <?php
+    <?php 
     if( wpestate_check_if_admin_page($post->ID) ){
         if ( is_user_logged_in() ) {   
             get_template_part('templates/user_menu'); 
@@ -44,8 +44,20 @@ $options=wpestate_page_details($post->ID);
         </div>  
         
         <div class="row admin-list-wrapper inbox-wrapper">    
+        
+        <div class="unread_mess_wrap">
+            <?php
+         
+            $no_unread=  intval(get_user_meta($userID,'unread_mess',true));
+            echo __('You have','wpestate').' '.$no_unread.' '.__('unread messages','wpestate');
+            ?>
+        </div>    
+            
         <?php
-          $args = array(
+      
+        
+        
+        $args = array(
                 'post_type'         => 'wpestate_message',
                 'post_status'       => 'publish',
                 'paged'             => $paged,
